@@ -1,0 +1,17 @@
+# === School Linux ===
+# 
+.git
+
+# ignore py venv
+venv/
+
+# ignore examples and tests
+amoeba-example/
+tests/
+
+# ignore log files
+*.log
+
+# ignore TeX output files
+*.aux
+*.pdf
