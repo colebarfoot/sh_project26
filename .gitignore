@@ -7,7 +7,7 @@ venv/
 
 # ignore examples and tests
 amoeba-example/
-tests/
+test/
 
 # ignore log files
 *.log
@@ -15,3 +15,9 @@ tests/
 # ignore TeX output files
 *.aux
 *.pdf
+
+# ignore slurm directory
+slurm/
+
+# ignore todo files
+todo*
