@@ -14,12 +14,7 @@ class exyz:
         with open(filepath, "r") as f:
             lines = f.readlines()
             self.num_atoms = int(lines[2])
-            self.atom_data = []
-
-            for line in lines[4:]:
-                if line == "\n":
-                    break
-                self.atom_data.append(line.strip().split())
+            self.atom_data = [line.strip().split() for line in lines[4:]]
 
     def convert_data(self):
         converted_data = []
@@ -50,7 +45,7 @@ class exyz:
 
 input_file = sys.argv[1]
 exyz_file = exyz(input_file)
-output_file = output_dir + exyz_file.filename.replace(".exyz", ".xyz")
+output_file = output_dir + exyz_file.filename
 
 
 with open(output_file, "w") as f:
