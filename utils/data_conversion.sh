@@ -23,9 +23,9 @@ TINKER_DIR="${DIR}/../tinker"
 OUTPUT_DIR="${DIR}/../amoeba"
 
 # run the intermediate conversion
-./exyz2tinker.py $1
+"$HOME"/src/sh-project/utils/exyz2tinker.py $1
 
 # run final conversion
-python ./tinker2lmp.py -xyz "${TINKER_DIR}/${FILENAME}.xyz" \
+python "$HOME"/src/sh-project/utils/tinker2lmp.py -xyz "${TINKER_DIR}/${FILENAME}.xyz" \
   -amoeba "${PRM_DIR}/amoeba_water.prm" \
   -data "${OUTPUT_DIR}/data.${FILENAME}.amoeba"

@@ -1,5 +1,5 @@
 # === School Linux ===
-# 
+#
 .git
 
 # ignore todo files
@@ -10,7 +10,7 @@ todo.*
 venv/
 
 # ignore pycache
-*/__pycache__/
+__pycache__/
 
 ## TeX
 # ignore log files
@@ -20,9 +20,23 @@ venv/
 *.aux
 *.pdf
 
+## LAMMPS
+# log
+log.lammps 
+
+# key
+*.key
+
+# dump files
+dump.*
+
+# lammpstrj
+*.lammpstrj
+
 ## local config
-# ignore slurm directory
-slurm/
+# ignore slurm 
+batch-scripts/
+out/
 
 # ignore data directory
 water_data/
