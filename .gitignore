@@ -2,13 +2,17 @@
 # 
 .git
 
+# ignore todo files
+todo.*
+
+## python
 # ignore py venv
 venv/
 
-# ignore examples and tests
-amoeba-example/
-test/
+# ignore pycache
+*/__pycache__/
 
+## TeX
 # ignore log files
 *.log
 
@@ -16,8 +20,13 @@ test/
 *.aux
 *.pdf
 
+## local config
 # ignore slurm directory
 slurm/
 
-# ignore todo files
-todo*
+# ignore data directory
+water_data/
+
+# ignore examples and tests
+amoeba-example/
+test/
