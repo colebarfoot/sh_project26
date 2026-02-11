@@ -15,16 +15,12 @@ fi
 # extract filepath and dir
 DIR="$(dirname "$1")"
 FILE="$(basename "$1")"
-
-# file locations
-PRM_DIR="${DIR}/../prm"
-TINKER_DIR="${DIR}/../tinker"
-OUTPUT_DIR="${DIR}/../amoeba"
+FILE="${FILE%.xyz}"
 
 # run the intermediate conversion
 "$HOME"/src/sh-project/utils/xyz2tinker.py $1
 
 # run final conversion
-python "$HOME"/src/sh-project/utils/tinker2lmp.py -xyz "${TINKER_DIR}/${FILE}" \
-  -amoeba "${PRM_DIR}/amoeba_water.prm" \
-  -data "${OUTPUT_DIR}/data.${FILE%.xyz}.amoeba"
+python "$HOME"/src/sh-project/utils/tinker2lmp.py -xyz "${DIR}/${FILE}.tinker" \
+  -amoeba "${DIR}/amoeba_water.prm" \
+  -data "${DIR}/data.${FILE%.xyz}.amoeba"

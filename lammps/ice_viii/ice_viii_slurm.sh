@@ -2,10 +2,10 @@
 #
 # batch script for lammps amoeba ice viii sim
 #
-#SBATCH --partition=long
-#SBATCH --time=10:00:00
+#SBATCH --partition=short
+#SBATCH --time=12:00:00
 #SBATCH --mem=1G
-#SBATCH --ntasks=8
+#SBATCH --ntasks=16
 #
 #############################################
 
@@ -14,4 +14,6 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-srun lmp-amoeba -in $1 >"$HOME/src/sh-project/lammps/out/ice_viii.txt"
+srun lmp-amoeba -in $1 >"$HOME/src/sh-project/lammps/ice_viii/.out/${SLURM_JOB_ID}.out"
+
+mv dump.lammpstrj "$HOME/src/sh-project/lammps/ice_viii/.out/dump.${SLURM_JOB_ID}.lammpstrj"

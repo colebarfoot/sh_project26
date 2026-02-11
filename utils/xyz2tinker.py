@@ -3,13 +3,13 @@
 import os
 import sys
 
-output_dir = "/home/s2471548/src/sh-project/water_data/tinker/"
+output_dir = "/home/s2471548/src/sh-project/.data/tinker/"
 os.makedirs(output_dir, exist_ok=True)
 
 
 class exyz:
     def __init__(self, filepath):
-        self.filename = filepath.split("/")[-1]
+        self.filename = filepath.split("/")[-1].split(".")[0]
 
         with open(filepath, "r") as f:
             lines = f.readlines()
@@ -45,8 +45,7 @@ class exyz:
 
 input_file = sys.argv[1]
 exyz_file = exyz(input_file)
-output_file = output_dir + exyz_file.filename
-
+output_file = output_dir + exyz_file.filename + ".tinker"
 
 with open(output_file, "w") as f:
     f.write(f"{exyz_file.num_atoms} converted data file\n")

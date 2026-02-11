@@ -24,9 +24,6 @@ __pycache__/
 # log
 log.lammps 
 
-# key
-*.key
-
 # dump files
 dump.*
 
@@ -35,12 +32,13 @@ dump.*
 
 ## local config
 # ignore slurm 
-batch-scripts/
-out/
+slurm-*.out
+*slurm.sh
 
 # ignore data directory
-water_data/
+.data/
+.out/
 
 # ignore examples and tests
-amoeba-example/
-test/
+.amoeba-example/
+.tests/
