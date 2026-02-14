@@ -4,16 +4,53 @@
 #
 #SBATCH --partition=short
 #SBATCH --time=12:00:00
-#SBATCH --mem=1G
-#SBATCH --ntasks=16
+#SBATCH --mem=4G
+#SBATCH --ntasks=64
 #
 #############################################
 
-if [ $# -ne 1 ]; then
-  echo "Required argument: [filepath]"
-  exit 1
-fi
+POSITIONAL_ARGS=()
+TEMP=""
+PRESS=""
+VOL=""
 
-srun lmp-amoeba -in $1 >"$HOME/src/sh-project/lammps/ice_viii/.out/${SLURM_JOB_ID}.out"
+while [[ $# -gt 0 ]]; do
+  case $1 in
+  -f | --file)
+    FILE=$2
+    shift
+    shift
+    ;;
+  -t | --temperature)
+    TEMP="$2K"
+    shift
+    shift
+    ;;
+  -p | --pressure)
+    PRESS="$2atm"
+    shift
+    shift
+    ;;
+  -v | --volume)
+    VOL="$2a3"
+    shift
+    shift
+    ;;
+  -* | --*)
+    echo "unknown option $2"
+    exit 1
+    ;;
+  *)
+    POSITIONAL_ARGS+=("$1")
+    shift
+    ;;
+  esac
+done
 
-mv dump.lammpstrj "$HOME/src/sh-project/lammps/ice_viii/.out/dump.${SLURM_JOB_ID}.lammpstrj"
+set -- "${POSTIONAL_ARGS[@]}"
+
+JOB_NO="${SLURM_JOB_ID}-${TEMP}${PRESS}${VOL}"
+
+srun lmp-amoeba -in ${FILE} >"$HOME/src/sh-project/lammps/ice_viii/.out/${JOB_NO}.txt"
+
+mv dump.lammpstrj "$HOME/src/sh-project/lammps/ice_viii/.out/dump.${JOB_NO}.lammpstrj"
