@@ -2,9 +2,9 @@
 #
 # batch script for lammps amoeba ice viii sim
 #
-#SBATCH --partition=short
+#SBATCH --partition=long
 #SBATCH --time=12:00:00
-#SBATCH --mem=4G
+#SBATCH --mem=2G
 #SBATCH --ntasks=64
 #
 #############################################
@@ -50,7 +50,8 @@ done
 set -- "${POSTIONAL_ARGS[@]}"
 
 JOB_NO="${SLURM_JOB_ID}-${TEMP}${PRESS}${VOL}"
+IN_DIR="$(dirname $FILE)"
 
 srun lmp-amoeba -in ${FILE} >"$HOME/src/sh-project/lammps/ice_viii/.out/${JOB_NO}.txt"
 
-mv dump.lammpstrj "$HOME/src/sh-project/lammps/ice_viii/.out/dump.${JOB_NO}.lammpstrj"
+mv "$IN_DIR/dump.lammpstrj" "$HOME/src/sh-project/lammps/ice_viii/.out/dump.${JOB_NO}.lammpstrj"

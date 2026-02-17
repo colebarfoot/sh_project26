@@ -1,0 +1,43 @@
+# Ice with amoeba !
+
+units           real
+boundary        p p p
+
+atom_style      amoeba
+bond_style      class2
+angle_style     amoeba
+dihedral_style  none
+
+# per-atom properties required by AMOEBA or HIPPO
+
+fix             amtype all property/atom i_amtype ghost yes
+fix             extra all property/atom i_amgroup d_redID d_pval ghost yes
+fix             extra2 all property/atom i_polaxe d2_xyzaxis 3
+
+# read data file
+
+read_data       .data/data.ice_viii.amoeba fix amtype NULL "Tinker Types"
+
+# force field
+
+pair_style      amoeba
+pair_coeff      * * .data/amoeba_water.prm .data/amoeba_water.key
+
+special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
+
+# initial velocities
+
+velocity        all create ${temp} 42
+
+# computes
+
+group           h_atoms id 2
+
+compute         mymsd h_atoms msd average yes
+compute         myvacf all vacf 
+
+# thermo output
+
+thermo_style    custom step temp press c_mymsd[4] c_myvacf[4] etotal vol
+
+run             0 post no

@@ -27,7 +27,7 @@ special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
 
 # initial velocities
 
-velocity        all create 300 42
+velocity        all create ${temp} 42
 
 # computes
 
@@ -40,7 +40,7 @@ compute         myvacf all vacf
 
 thermo_style    custom step temp press c_mymsd[4] c_myvacf[4] etotal vol
 
-dump            mydmp all atom 1000 dump.lammpstrj
+dump            mydmp all atom 1000 dump.${temp}${press}.lammpstrj
 
 # minimization
 
@@ -48,12 +48,24 @@ minimize        1.0e-6 1.0e-6 100000 1000000
 
 # dynamics
 thermo          100
-timestep        1.0
-fix             1 all nvt temp 300 300 1.0
+
+variable        dt internal 1.0
+
+timestep        ${dt}
+
+fix             1 all nvt temp ${temp} ${temp} $(100.0*dt)
 
 run             20000
 
 unfix           1
-fix             2 all npt temp 300 300 1.0 iso 65000 65000 1000.0
 
-run             500000
+variable        mypress equal press
+fix             2 all npt temp ${temp} ${temp} $(100.0*dt) iso ${mypress} ${press} $(1000.0*dt)
+variable        mypress delete
+
+run             20000
+
+unfix           2
+fix             3 all npt temp ${temp} ${temp} $(100.0*dt) iso ${press} ${press} $(1000.0*dt)
+
+run             960000
