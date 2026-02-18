@@ -3,9 +3,6 @@
 import os
 import sys
 
-output_dir = "/home/s2471548/src/sh-project/.data/tinker/"
-os.makedirs(output_dir, exist_ok=True)
-
 
 class exyz:
     def __init__(self, filepath):
@@ -45,6 +42,7 @@ class exyz:
 
 input_file = sys.argv[1]
 exyz_file = exyz(input_file)
+output_dir = os.path.dirname(input_file)
 output_file = output_dir + exyz_file.filename + ".tinker"
 
 with open(output_file, "w") as f:

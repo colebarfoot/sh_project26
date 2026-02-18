@@ -18,9 +18,9 @@ FILE="$(basename "$1")"
 FILE="${FILE%.xyz}"
 
 # run the intermediate conversion
-"$HOME"/src/sh-project/utils/xyz2tinker.py $1
+"$HOME/src/sh-project/utils/xyz2tinker.py" $1
 
 # run final conversion
-python "$HOME"/src/sh-project/utils/tinker2lmp.py -xyz "${DIR}/${FILE}.tinker" \
-  -amoeba "${DIR}/amoeba_water.prm" \
-  -data "${DIR}/data.${FILE%.xyz}.amoeba"
+python "$HOME/src/sh-project/utils/tinker2lmp.py" -xyz "$DIR/${FILE}.tinker" \
+  -amoeba "$DIR/amoeba_water.prm" \
+  -data "$DIR/data.${FILE%.xyz}.amoeba"

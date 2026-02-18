@@ -32,8 +32,10 @@ velocity        all create ${temp} 42
 # computes
 
 group           h_atoms id 2
+group           o_atoms id 1
 
 compute         mymsd h_atoms msd average yes
+compute         oxy_msd o_atoms msd average yes
 compute         myvacf all vacf 
 
 # thermo output

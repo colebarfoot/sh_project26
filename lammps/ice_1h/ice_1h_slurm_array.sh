@@ -68,7 +68,7 @@ while IFS= read -r line; do
       -var press "$P" \
       >"$HOME/src/sh-project/lammps/ice_viii/.out/${SLURM_JOB_ID}-${T}K${P}atm.txt"
 
-    mv "$IN_DIR/dump.${T}K${P}atm.lammpstrj" "$HOME/src/sh-project/lammps/ice_viii/.out/dump/dump.${SLURM_JOB_ID}-${T}K${P}atm.lammpstrj"
+    mv "$IN_DIR/dump.${T}K${P}atm.lammpstrj" "$HOME/src/sh-project/lammps/ice_viii/.out/dump.${SLURM_JOB_ID}-${T}K${P}atm.lammpstrj"
 
     break
   fi
