@@ -33,11 +33,12 @@ dump.*
 ## local config
 # ignore slurm 
 slurm-*.out
-*slurm.sh
+*input*.txt
 
 # ignore data directory
 .data/
 .out/
+.input/
 
 # ignore examples and tests
 .amoeba-example/

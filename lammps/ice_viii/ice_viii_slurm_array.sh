@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# batch script for lammps amoeba ice viii sim
+# array batch script for lammps amoeba ice viii sim
 #
 #SBATCH --partition=long
 #SBATCH --time=1-00:00:00
@@ -14,11 +14,6 @@ POSITIONAL_ARGS=()
 
 while [[ $# -ne 0 ]]; do
   case $1 in
-  -f | --f)
-    IN_FILE=$2
-    shift
-    shift
-    ;;
   -p | --p)
     PARAM_FILE=$2
     shift
@@ -37,12 +32,7 @@ done
 
 set -- "${POSTIONAL_ARGS[@]}"
 
-if [[ -z "$IN_FILE" ]]; then
-  echo "Required parameter: [in_file]"
-  exit 1
-else
-  echo "LAMMPS script: ${IN_FILE}"
-fi
+IN_FILE="${POSITIONAL_ARGS[0]}"
 IN_DIR="$(dirname $IN_FILE)"
 
 if [[ -z "$PARAM_FILE" ]]; then
@@ -50,6 +40,13 @@ if [[ -z "$PARAM_FILE" ]]; then
   exit 1
 else
   echo "Parameter file: ${PARAM_FILE}"
+fi
+
+if [[ -z "$IN_FILE" ]]; then
+  echo "Missing paramter: [file]"
+  exit 1
+else
+  echo "LAMMPS script: ${IN_FILE}"
 fi
 
 found=0
@@ -60,14 +57,17 @@ while IFS= read -r line; do
     found=1
     T="${paramarr[1]}"
     P="${paramarr[2]}"
+    echo "Temperature: ${T}K"
+    echo "Pressure: ${P}atm"
 
-    echo "$SLURM_ARRAY_TASK_ID"
+    echo "Array ID: ${SLURM_ARRAY_TASK_ID}"
 
     srun lmp-amoeba \
       -in "$IN_FILE" \
       -var temp "$T" \
       -var press "$P" \
       >"$HOME/src/sh-project/lammps/ice_viii/.out/${SLURM_JOB_ID}-${T}K${P}atm.txt"
+
     mv "$IN_DIR/dump.${T}K${P}atm.lammpstrj" "$HOME/src/sh-project/lammps/ice_viii/.out/dump.${SLURM_JOB_ID}-${T}K${P}atm.lammpstrj"
 
     break

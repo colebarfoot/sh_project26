@@ -40,7 +40,7 @@ compute         myvacf all vacf
 
 thermo_style    custom step temp press c_mymsd[4] c_myvacf[4] etotal vol
 
-dump            mydmp all atom 1000 dump.${temp}${press}.lammpstrj
+dump            mydmp all atom 1000 dump.${temp}K${press}atm.lammpstrj
 
 # minimization
 
