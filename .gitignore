@@ -20,6 +20,11 @@ __pycache__/
 *.aux
 *.pdf
 
+# bib
+*.bcf
+*.run.xml
+*.toc
+
 ## LAMMPS
 # log
 log.lammps 
@@ -33,12 +38,12 @@ dump.*
 ## local config
 # ignore slurm 
 slurm-*.out
-*input*.txt
 
 # ignore data directory
 .data/
 .out/
 .input/
+*.txt
 
 # ignore examples and tests
 .amoeba-example/

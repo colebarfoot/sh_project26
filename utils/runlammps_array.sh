@@ -3,10 +3,10 @@
 # array batch script for lammps amoeba ice viii sim
 #
 #SBATCH --partition=long
-#SBATCH --time=1-00:00:00
+#SBATCH --time=4-00:00:00
 #SBATCH --mem=1G
-#SBATCH --ntasks=32
-#SBATCH --array=1-9
+#SBATCH --ntasks=16
+#SBATCH --array=1-16
 #
 #############################################
 
@@ -14,7 +14,7 @@ POSITIONAL_ARGS=()
 
 while [[ $# -ne 0 ]]; do
   case $1 in
-  -p | --p)
+  -p | --param)
     PARAM_FILE=$2
     shift
     shift
@@ -66,9 +66,8 @@ while IFS= read -r line; do
       -in "$IN_FILE" \
       -var temp "$T" \
       -var press "$P" \
-      >"$HOME/src/sh-project/lammps/ice_viii/.out/${SLURM_JOB_ID}-${T}K${P}atm.txt"
-
-    mv "$IN_DIR/dump.${T}K${P}atm.lammpstrj" "$HOME/src/sh-project/lammps/ice_viii/.out/dump/dump.${SLURM_JOB_ID}-${T}K${P}atm.lammpstrj"
+      -var JOB_NO="$SLURM_JOB_ID" \
+      >"$HOME/src/sh-project/lammps/ice_viii/.out/${SLURM_JOB_ID}-${T}-K${P}atm.txt"
 
     break
   fi

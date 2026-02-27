@@ -1,7 +1,81 @@
-\documentclass[12pt]{article}
+% This is a template for a senior honours project report.
+\documentclass[a4paper,12pt]{article}
+\usepackage{fullpage}
+\usepackage[pdftex]{graphicx}
+\graphicspath{ {./figs/} }
+\usepackage[backend=biber,sorting=none]{biblatex}
+\addbibresource{references.bib}
 
+%
+%                       This section generates a title page
+%                       Edit only the sections indicated to put
+%                       in the project title, your name, supervisor,
+%                       project length in weeks and submission date
+%
 \begin{document}
+\pagestyle{empty}                       % No numbers on title page      
 
-Hello world!
+\par\noindent\includegraphics[width=12cm]{PandA_crest.pdf}
+
+\par\noindent                                           % Centre Title, and name
+\vspace*{2cm}
+\begin{center}
+	\Large\bf \Large\bf Senior Honours Project\\
+	\LARGE\bf Template for Writing a Report         % Replace with your title
+\end{center}
+\vspace*{0.5cm}
+\begin{center}
+	\bf Your Name\\                               % Repace with your name and
+	October 2021                                   % Submission Date
+\end{center}
+\vspace*{5mm}
+%
+%                       Insert your abstract HERE                
+\begin{abstract}
+	The abstract is a short, concise explanation of the project
+	covering the aims, outlines of techniques used and a short
+	summary of the results. It should contain enough information to
+	make the aims and success of the project clear, but contain no details.
+	A typical abstract should be between 50 and 100 words.
+\end{abstract}
+
+\vspace*{1cm}
+
+\subsubsection*{Declaration}
+
+\begin{quotation}
+	I declare that this project and report is my own work.
+\end{quotation}
+
+\vspace*{2cm}
+Signature:\hspace*{8cm}Date:  31/10/2021         % You can include a scanned version 
+% of you siganture here, or comment 
+% this line out
+
+\vfill
+{\bf Supervisor:} Dr. A.N. Other                 % Change to suit
+\hfill
+10 Weeks                                         % Change to suit
+\newpage
+%
+%                       End of Title Page
+\pagestyle{plain}                               % Page numbers at bottom
+\setcounter{page}{1}                            % Set page number to 1
+\tableofcontents                                % Makes Table of Contents
+\input{ ./sections/introduction.tex }
+
+\input{ ./sections/method.tex }
+
+\input{ ./sections/results.tex }
+
+\input{ ./sections/conclusion.tex }
+
+
+\newpage
+\section{References}
+% Now include appendices
+
+\appendix
+\input{ ./sections/appendices.tex }
 
 \end{document}

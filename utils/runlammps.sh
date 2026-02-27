@@ -2,24 +2,28 @@
 #
 # batch script for lammps amoeba ice viii sim
 #
-#SBATCH --partition=short
-#SBATCH --time=12:00:00
-#SBATCH --mem=2G
-#SBATCH --ntasks=64
+#SBATCH --partition=long
+#SBATCH --time=4-00:00:00
+#SBATCH --mem=1G
+#SBATCH --ntasks=16
 #
 #############################################
 
 POSITIONAL_ARGS=()
 
+JOB_NO=${SLURM_JOB_ID}
+
 while [[ $# -gt 0 ]]; do
   case $1 in
   -t | --temperature)
     TEMP="$2K"
+    JOB_NO="${JOB_NO}-${TEMP}K"
     shift
     shift
     ;;
   -p | --pressure)
     PRESS="$2atm"
+    JOB_NO="${JOB_NO}-${PRESS}K"
     shift
     shift
     ;;
@@ -39,25 +43,19 @@ set -- "${POSTIONAL_ARGS[@]}"
 FILE="${POSITIONAL_ARGS[0]}"
 IN_DIR="$(dirname $FILE)"
 
-if [[ -z "$TEMP" ]]; then
-  echo "Required argument: temp"
-  exit 1
-fi
-
-if [[ -z "$PRESS" ]]; then
-  echo "Required argument: press"
-  exit 1
-fi
-
 if [[ -z "$FILE" ]]; then
   echo "Missing paramter: [file]"
   exit 1
 else
-  echo "LAMMPS script: [file]"
+  echo "LAMMPS script: $FILE"
 fi
 
-JOB_NO="${SLURM_JOB_ID}-${TEMP}${PRESS}"
-
-srun lmp-amoeba -in "$FILE" -var temp "$TEMP" -var press "$PRESS" >"$HOME/src/sh-project/lammps/ice_viii/.out/${JOB_NO}.txt"
-
-mv "$IN_DIR/dump.${TEMP}K${PRESS}atm.lammpstrj" "$HOME/src/sh-project/lammps/ice_viii/.out/dump.${JOB_NO}.lammpstrj"
+RUN="srun lmp-amoeba -in ${FILE}"
+OUT="$HOME/src/sh-project/lammps/ice_viii/${JOB_NO}.txt"
+if ! [[ -z "$TEMP" ]]; then RUN="${RUN} -var temp ${TEMP}"; fi
+if ! [[ -z "$PRESS" ]]; then
+  RUN="${RUN} -var press ${PRESS}"
+  eval "${RUN}>${OUT}"
+else
+  eval "${RUN}>${OUT}"
+fi

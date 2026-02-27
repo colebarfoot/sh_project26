@@ -23,4 +23,5 @@ FILE="${FILE%.xyz}"
 # run final conversion
 python "$HOME/src/sh-project/utils/tinker2lmp.py" -xyz "$DIR/${FILE}.tinker" \
   -amoeba "$DIR/amoeba_water.prm" \
-  -data "$DIR/data.${FILE%.xyz}.amoeba"
+  -data "$DIR/data.${FILE%.xyz}.amoeba" \
+  -pbc 28.014 28.014 40.860

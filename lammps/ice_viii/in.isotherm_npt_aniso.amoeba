@@ -1,0 +1,80 @@
+# Ice with amoeba !
+
+units           real
+boundary        p p p
+
+atom_style      amoeba
+bond_style      class2
+angle_style     amoeba
+dihedral_style  none
+
+# per-atom properties required by AMOEBA or HIPPO
+
+fix             amtype all property/atom i_amtype ghost yes
+fix             extra all property/atom i_amgroup d_redID d_pval ghost yes
+fix             extra2 all property/atom i_polaxe d2_xyzaxis 3
+
+# read data file
+
+read_data       .data/data.ice8.amoeba fix amtype NULL "Tinker Types"
+
+# force field
+
+pair_style      amoeba
+pair_coeff      * * .data/amoeba_water.prm .data/amoeba_ice.key
+
+special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
+
+# initial velocities
+
+velocity        all create ${temp} 42
+
+# computes
+
+group           h_atoms id 2
+group           o_atoms id 1
+
+compute         h_msd h_atoms msd com yes
+compute         o_msd o_atoms msd com yes
+compute         h_vacf h_atoms vacf 
+compute         o_vacf o_atoms vacf
+
+# thermo output
+
+thermo_style    custom step temp press etotal vol &
+  c_h_msd[*] c_o_msd[*] c_h_vacf[*] c_o_vacf[*]
+
+dump            mydmp all custom 1000 ${temp}${press}${JOB_NO}.lammpstrj id type x y z vx vy vz
+
+# minimization
+
+minimize        1.0e-6 1.0e-6 100000 1000000
+
+# dynamics
+thermo          1000
+
+variable        dt internal 1.0
+variable        tdamp equal "100.0*dt"
+variable        pdamp equal "1000.0*dt"
+
+timestep        ${dt}
+
+fix             1 all nvt temp ${temp} ${temp} ${tdamp}
+
+run             50000
+
+unfix           1
+
+variable        mypress equal press
+fix             2 all npt temp ${temp} ${temp} ${tdamp} iso ${mypress} ${press} ${pdamp}
+variable        mypress delete
+
+run             50000
+
+unfix           2
+
+fix             3 all npt temp ${temp} ${temp} ${tdamp} aniso ${press} ${press} ${pdamp}
+
+run             2000000
+
+write_restart   restart.${TEMP}${PRESS}${JOB_NO}
