@@ -24,6 +24,8 @@ __pycache__/
 *.bcf
 *.run.xml
 *.toc
+*.bbl
+*.blg
 
 ## LAMMPS
 # log

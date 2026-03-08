@@ -1,4 +1,4 @@
-% This is a template for a senior honours project report.
+% Senior Honours Project Report using SOPA template
 \documentclass[a4paper,12pt]{article}
 \usepackage{fullpage}
 \usepackage[pdftex]{graphicx}
@@ -6,31 +6,33 @@
 \usepackage[backend=biber,sorting=none]{biblatex}
 \addbibresource{references.bib}
 
-%
-%                       This section generates a title page
-%                       Edit only the sections indicated to put
-%                       in the project title, your name, supervisor,
-%                       project length in weeks and submission date
-%
 \begin{document}
+
+%
+%                      Beginning of Title Page
+%
+
 \pagestyle{empty}                       % No numbers on title page      
 
 \par\noindent\includegraphics[width=12cm]{PandA_crest.pdf}
 
-\par\noindent                                           % Centre Title, and name
+\par\noindent        
 \vspace*{2cm}
 \begin{center}
 	\Large\bf \Large\bf Senior Honours Project\\
-	\LARGE\bf Template for Writing a Report         % Replace with your title
+	\LARGE\bf Molecular Dynamics Simulation of High Pressure Ice with the AMOEBA Polarizable Force Field
 \end{center}
 \vspace*{0.5cm}
 \begin{center}
-	\bf Your Name\\                               % Repace with your name and
-	October 2021                                   % Submission Date
+	\bf Cole Barfoot\\
+	March 2026
 \end{center}
 \vspace*{5mm}
+
 %
-%                       Insert your abstract HERE                
+%                       Abstract  
+%
+
 \begin{abstract}
 	The abstract is a short, concise explanation of the project
 	covering the aims, outlines of techniques used and a short
@@ -48,20 +50,27 @@
 \end{quotation}
 
 \vspace*{2cm}
-Signature:\hspace*{8cm}Date:  31/10/2021         % You can include a scanned version 
-% of you siganture here, or comment 
-% this line out
+Signature:\hspace*{8cm}Date:  27/03/2026         
+% insert scanned version of signature
 
 \vfill
-{\bf Supervisor:} Dr. A.N. Other                 % Change to suit
+{\bf Supervisors:} Prof. G. J. Ackland and Dr. C. G. Pruteanu
 \hfill
-10 Weeks                                         % Change to suit
+10 Weeks
 \newpage
+
 %
 %                       End of Title Page
+%
+
 \pagestyle{plain}                               % Page numbers at bottom
 \setcounter{page}{1}                            % Set page number to 1
 \tableofcontents                                % Makes Table of Contents
+
+%
+%                       Main Text
+%
+
 \input{ ./sections/introduction.tex }
 
 \input{ ./sections/method.tex }
@@ -70,10 +79,12 @@ Signature:\hspace*{8cm}Date:  31/10/2021         % You can include a scanned ver
 
 \input{ ./sections/conclusion.tex }
 
+%
+%                       End of Main Text
+%
 
 \newpage
 \section{References}
-% Now include appendices
 
 \appendix
 \input{ ./sections/appendices.tex }
