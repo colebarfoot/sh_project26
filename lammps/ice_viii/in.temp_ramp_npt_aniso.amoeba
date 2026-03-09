@@ -30,15 +30,15 @@ special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
 group           h_atoms id 2
 group           o_atoms id 1
 
-compute         h_msd h_atoms msd com yes
-compute         o_msd o_atoms msd com yes
+compute         h_msd h_atoms msd
+compute         o_msd o_atoms msd
 compute         h_vacf h_atoms vacf
 compute         o_vacf o_atoms vacf
 
 # thermo output
 
 thermo_style    custom step temp press etotal vol &
-  c_h_msd[*] c_o_msd[*] c_h_vacf[*] c_o_vacf[*] 
+  c_h_msd[4] c_o_msd[4] c_h_vacf[4] c_o_vacf[4] 
 
 dump            mydmp all custom 1000 temp_ramp_aniso.lammpstrj id type x y z vx vy vz
 dump_modify     mydmp sort id
@@ -63,6 +63,8 @@ timestep        ${dt}
 
 variable        tdamp equal "100.0*dt"
 variable        pdamp equal "1000.0*dt"
+
+fix             myfix all momentum 10 linear 1 1 1 
 
 fix             1 all nvt temp ${temp} ${temp} ${tdamp}
 
@@ -90,7 +92,7 @@ variable        temp equal ${new_temp}
 fix             4 all npt temp ${temp} ${temp} ${tdamp} aniso ${press} ${press} ${pdamp}
 run             100000
 
-if              "${temp} >= 310" then "jump break" else "unfix 4" & "jump temp_ramp"
+if              "${temp} >= 310" then "jump SELF break" else "unfix 4" "jump SELF temp_ramp"
 
 
 label           break

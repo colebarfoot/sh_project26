@@ -45,7 +45,12 @@ slurm-*.out
 .data/
 .out/
 .input/
+data/
+out/
+dump/
 *.txt
+restart.*
+*.dat
 
 # ignore examples and tests
 .amoeba-example/

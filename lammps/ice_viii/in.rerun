@@ -13,13 +13,11 @@ fix             extra all property/atom i_amgroup d_redID d_pval ghost yes
 fix             extra2 all property/atom i_polaxe d2_xyzaxis 3
 
 # read data file
-
-read_data       .data/data.ice_viii.amoeba fix amtype NULL "Tinker Types"
-
-# force field
+read_data       .data/data.ice8.amoeba fix amtype NULL "Tinker Types"
+read_dump       ${dump} 0 x y z vx vy vz box yes scaled no wrapped yes
 
 pair_style      amoeba
-pair_coeff      * * .data/amoeba_water.prm .data/amoeba_water.key
+pair_coeff      * * .data/amoeba_water.prm .data/amoeba_ice.key
 
 special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
 
@@ -29,4 +27,9 @@ group           o_atoms id 2
 compute         myrdf o_atoms rdf 100 1 1 1 2
 fix             frdf o_atoms ave/time 1 1 1 c_myrdf[*] file rdf.dat mode vector
 
+compute         h_msd h_atoms msd
+fix             fmsd h_atoms ave/time 1 1 1 c_h_msd[4] file h_msd.dat 
+
+fix             myfix all momentum linear 1 1 1
+reset_atoms     image all
 rerun           ${dump} dump x y z vx vy vz

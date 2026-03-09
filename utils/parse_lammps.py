@@ -8,6 +8,7 @@ import datetime
 
 class Lammps:
     def __init__(self, file, cutoff=10):
+        self.file = file
         self.data = []
         self.params = []
 
@@ -19,12 +20,13 @@ class Lammps:
         self.step_cutoff(cutoff)
 
     def parse(self) -> bool:
+        last = self.lines[-1]
         for i, line in enumerate(self.lines):
-            if line.startswith("Total wall time"):
-                return False
             if line.strip().startswith("Step"):
                 self.lines = self.lines[i:]
                 break
+            if line == last:
+                return False
         if not self.params:
             for name in self.lines[0].strip().split():
                 self.params.append(name)
@@ -33,27 +35,34 @@ class Lammps:
             data_pts = line.strip().split()
             if not data_pts:
                 continue
-            if data_pts[0].isalpha():
+            try:
+                float(data_pts[0])
+            except ValueError:
                 self.lines = self.lines[j:]
                 break
-            if len(data_pts) < len(self.params):
-                return False
             for i in range(len(self.params)):
-                self.data[i].append(data_pts[i])
-            if j == len(self.lines) - 1:
-                return False
+                try:
+                    self.data[i].append(data_pts[i])
+                except IndexError:
+                    print('malformed line')
+                    return False
+                if line == last:
+                    return False
         return True
 
     def step_cutoff(self, cutoff):
         if not cutoff > 0:
             raise ValueError
         index = 0
-        for step in self.data[0]:
-            if int(step) >= cutoff:
-                index = self.data[0].index(step)
-                for i in range(len(self.params)):
-                    self.data[i] = self.data[i][index:]
-                return
+        try:
+            for idx, step in enumerate(self.data[0]):
+                if int(step) >= cutoff:
+                    for i in range(len(self.params)):
+                        self.data[i] = self.data[i][idx:]
+                    return
+        except IndexError:
+            print(self.file)
+            return
         raise ValueError("too few steps")
 
 
@@ -62,16 +71,16 @@ def opts():
     cutoff = 10
     argv = sys.argv[1:]
 
-    opts, _ = getopt.getopt(argv, "f:p:c:", ["--file", "--params", "--cutoff"])
+    opts, _ = getopt.getopt(argv, "f:c:")
 
     for opt, arg in opts:
-        if opt in ("-f", "--file"):
+        if opt in ("-f"):
             file = arg
-        elif opt in ("-c", "--cutoff"):
+        elif opt in ("-c"):
             try:
                 cutoff = int(arg)
-            except TypeError:
-                raise Exception
+            except ValueError:
+                raise ValueError("cutoff must be an integer")
 
     if file is None:
         raise ValueError
@@ -87,13 +96,13 @@ in_dir = os.path.dirname(file)
 output_dir = os.path.join(in_dir, "parsed")
 os.makedirs(output_dir, exist_ok=True)
 
-_, file = os.path.split(file)
-file, _ = os.path.splitext(file)
-output_file = file + "-parsed.txt"
+input_file = os.path.basename(file)
+job_id, _ = os.path.splitext(input_file)
+output_file = job_id + "-parsed.txt"
 output_file = os.path.join(output_dir, output_file)
 
 with open(output_file, "w") as f:
-    f.write(f"{datetime.date.today()}        " + f"jobid: {file}\n")
+    f.write(f"{datetime.date.today()}        " + f"jobid: {job_id}\n")
     for param in lammps.params:
         f.write(f"{param} ")
     f.write("\n")
@@ -104,3 +113,5 @@ with open(output_file, "w") as f:
             except IndexError:
                 pass
         f.write("\n")
+
+print(f"file: {output_file} parsed")
