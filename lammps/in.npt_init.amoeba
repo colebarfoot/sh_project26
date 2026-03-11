@@ -16,12 +16,12 @@ fix             extra2 all property/atom i_polaxe d2_xyzaxis 3
 
 # read data file
 
-read_data       .data/data.ice_viii2.amoeba fix amtype NULL "Tinker Types"
+read_data       data/data.ice8.amoeba fix amtype NULL "Tinker Types"
 
 # force field
 
 pair_style      amoeba
-pair_coeff      * * .data/amoeba_water.prm .data/my_amoeba_water.key
+pair_coeff      * * prm/amoeba_water.prm prm/amoeba_ice.key
 
 special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
 
@@ -29,19 +29,28 @@ special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
 variable        temp internal 250.0
 variable        press internal 30000.0
 
-velocity        all create ${temp} 42
+velocity        all create ${temp} 14758
 
-# trajectory output
-dump            mydmp all custom 1 npt_init.lammpstrj id type x y z vx vy vz
-dump_modify     mydmp sort id
+# thermo output and computes
+variable xlen equal lx
+variable zlen equal lz
+variable c_a equal "v_zlen/v_xlen"
 
-# thermo output
+thermo_style    custom step temp press etotal vol v_c_a
+thermo_modify   line yaml format none
 
-thermo_style    custom step temp press etotal vol
-
+# dynamics
 minimize        1e-6 1e-8 10000 10000
 
 timestep        1.0
-run             10
+thermo          10
 
-write_restart   restart.npt
+fix mynve all nve
+run             100
+unfix mynve 
+
+variable mypress equal press
+fix mynpt all npt temp ${temp} ${temp} 100.0 aniso ${mypress} ${mypress} 1000.0
+variable mypress delete
+run 100
+unfix mynpt

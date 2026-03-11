@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# array batch script for lammps amoeba ice viii sim
+# array batch script for lammps amoeba high pressure ice simulation
 #
 #SBATCH --partition=long
 #SBATCH --time=4-00:00:00
 #SBATCH --mem=1G
-#SBATCH --ntasks=16
-#SBATCH --array=1-16
+#SBATCH --ntasks=8
+#SBATCH --array=1-30
 #
 #############################################
 
@@ -69,7 +69,7 @@ while IFS= read -r line; do
       -var temp "$T" \
       -var press "$P" \
       -var JOB_NO "$SLURM_JOB_ID" \
-      >"$HOME/src/sh-project/lammps/ice_viii/.out/${SLURM_JOB_ID}-${T}K-${P}atm.txt"
+      >"$HOME/src/sh-project/lammps/out/isotherm-${SLURM_JOB_ID}-${T}K-${P}atm.txt"
 
     break
   fi

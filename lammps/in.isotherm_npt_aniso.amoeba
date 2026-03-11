@@ -44,7 +44,7 @@ compute         o_vacf o_atoms vacf
 thermo_style    custom step temp press etotal vol &
   c_h_msd[4] c_o_msd[4] c_h_vacf[4] c_o_vacf[4]
 
-dump            mydmp all custom 1000 isotherm-${temp}K${press}atm.lammpstrj id type x y z vx vy vz
+dump            mydmp all custom 10000 isotherm-${temp}K${press}atm.lammpstrj id type x y z vx vy vz
 
 # minimization
 
@@ -62,7 +62,7 @@ timestep        ${dt}
 fix             myfix all momentum 10 linear 1 1 1 
 fix             1 all nvt temp ${temp} ${temp} ${tdamp}
 
-run             50000
+run             250000
 
 unfix           1
 
@@ -70,12 +70,12 @@ variable        mypress equal press
 fix             2 all npt temp ${temp} ${temp} ${tdamp} iso ${mypress} ${press} ${pdamp}
 variable        mypress delete
 
-run             50000
+run             250000
 
 unfix           2
 
 fix             3 all npt temp ${temp} ${temp} ${tdamp} aniso ${press} ${press} ${pdamp} couple xy
 
-run             2000000
+run             4000000
 
 write_restart   restart.isotherm-${temp}K${press}atm

@@ -10,8 +10,8 @@ class exyz:
 
         with open(filepath, "r") as f:
             lines = f.readlines()
-            self.num_atoms = int(lines[2])
-            self.atom_data = [line.strip().split() for line in lines[4:]]
+            self.num_atoms = int(lines[0])
+            self.atom_data = [line.strip().split() for line in lines[2:]]
 
     def convert_data(self):
         converted_data = []
