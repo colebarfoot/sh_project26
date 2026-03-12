@@ -41,17 +41,16 @@ dump.*
 # ignore slurm 
 slurm-*.out
 
-# ignore data directory
-.data/
-.out/
-.input/
+# ignore data
 data/
 out/
 dump/
+input/
+parsed-data/
 *.txt
 restart.*
 *.dat
 
 # ignore examples and tests
-.amoeba-example/
-.tests/
+amoeba-example/
+tests/

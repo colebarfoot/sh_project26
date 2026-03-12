@@ -25,19 +25,33 @@ pair_coeff      * * prm/amoeba_water.prm prm/amoeba_ice.key
 
 special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
 
-# initial conditions
+# simulation conditions
 variable        temp internal 250.0
 variable        press internal 30000.0
-
 velocity        all create ${temp} 14758
 
 # thermo output and computes
-variable xlen equal lx
-variable zlen equal lz
-variable c_a equal "v_zlen/v_xlen"
+variable        jobid index ""
+group           ogroup type 1
+group           hgroup type 2
+variable        xlen equal lx
+variable        zlen equal lz
+variable        ratio equal "v_zlen/v_xlen"
+compute         omsd ogroup msd
+compute         hmsd hgroup msd
+compute         myrdf all rdf 100 1 1 1 2 2 2
+fix             myrdf all ave/time 100 1 100 c_myrdf[*] file ${jobid}rdf.dat mode vector
+compute         ovacf ogroup vacf
+compute         hvacf hgroup vacf
+compute         hbonds all hbond/local 3.0 30.0 ogroup ogroup hgroup angle dist
 
-thermo_style    custom step temp press etotal vol v_c_a
-thermo_modify   line yaml format none
+thermo_style    custom step temp press etotal vol v_ratio c_omsd[4] c_hmsd[4] c_ovacf[4] c_hvacf[4] c_hbonds
+thermo_modify   line yaml format none &
+  colname 1 Timestep colname 6 BoxRatio colname 7 OMSD colname 8 HMSD &
+  colname 9 OVACF colname 10 HVACF colname 11 HBONDS
+
+dump            mydmp all custom/gz 1000 ${temp}K-${press}atm${jobid}.lammpstrj.gz &
+  id type x y z vx vy vz 
 
 # dynamics
 minimize        1e-6 1e-8 10000 10000
@@ -45,9 +59,9 @@ minimize        1e-6 1e-8 10000 10000
 timestep        1.0
 thermo          10
 
-fix mynve all nve
+fix             mynve all nve
 run             100
-unfix mynve 
+unfix           mynve 
 
 variable mypress equal press
 fix mynpt all npt temp ${temp} ${temp} 100.0 aniso ${mypress} ${mypress} 1000.0

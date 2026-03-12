@@ -1,6 +1,9 @@
 #!/bin/bash
-#
-# batch script for lammps amoeba ice viii sim
+# 
+# date: 30-01-2026
+# author: Cole Barfoot
+# batch script for high pressure ice LAMMPS 
+# AMOEBA simulation
 #
 #SBATCH --partition=long
 #SBATCH --time=4-00:00:00
@@ -13,6 +16,7 @@ POSITIONAL_ARGS=()
 
 JOB_NO=${SLURM_JOB_ID}
 
+# get cmdline options
 while [[ $# -gt 0 ]]; do
   case $1 in
   -t | --temperature)
@@ -50,8 +54,10 @@ else
   echo "LAMMPS script: $FILE"
 fi
 
+# if temperature and pressure not specified,
+# simulation will run with default conditions
 RUN="srun lmp-amoeba -in ${FILE}"
-OUT="$HOME/src/sh-project/lammps/ice_viii/${JOB_NO}.txt"
+OUT="$HOME/src/sh-project/lammps/out/${JOB_NO}.txt"
 if ! [[ -z "$TEMP" ]]; then RUN="${RUN} -var temp ${TEMP}"; fi
 if ! [[ -z "$PRESS" ]]; then
   RUN="${RUN} -var press ${PRESS}"

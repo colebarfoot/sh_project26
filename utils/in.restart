@@ -1,10 +1,15 @@
-# Ice with amoeba !
+# restart !
+#
+# date: 14-02-2026
+# author: Cole Barfoot
+# restart LAMMPS simulations with AMOEBA forcefield
+#
+####################################################
 
-
-# read restart file
+# -- Read restart file
 read_restart    ${restart}
 
-# force field
+# -- Force field
 
 fix             amtype all property/atom i_amtype ghost yes
 fix             extra all property/atom i_amgroup d_redID d_pval ghost yes
@@ -15,7 +20,11 @@ pair_coeff      * * .data/amoeba_water.prm .data/my_amoeba_water.key
 
 special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
 
+# -- Thermodynamic output and computes
+
 thermo_style    custom step temp etotal press
+
+# -- Dynamics
 
 fix             1 all nve
 thermo          1

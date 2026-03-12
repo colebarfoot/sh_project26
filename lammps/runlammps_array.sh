@@ -3,7 +3,7 @@
 # array batch script for lammps amoeba high pressure ice simulation
 #
 #SBATCH --partition=long
-#SBATCH --time=4-00:00:00
+#SBATCH --time=5-00:00:00
 #SBATCH --mem=1G
 #SBATCH --ntasks=8
 #SBATCH --array=1-30
@@ -62,13 +62,13 @@ while IFS= read -r line; do
 
     echo "Array ID: ${SLURM_ARRAY_TASK_ID}"
 
-    mkdir -p "$HOME/src/sh-project/lammps/ice_viii/.out"
+    mkdir -p "$HOME/src/sh-project/lammps/out"
 
     srun lmp-amoeba \
       -in "$IN_FILE" \
       -var temp "$T" \
       -var press "$P" \
-      -var JOB_NO "$SLURM_JOB_ID" \
+      -var jobid "$SLURM_JOB_ID" \
       >"$HOME/src/sh-project/lammps/out/isotherm-${SLURM_JOB_ID}-${T}K-${P}atm.txt"
 
     break

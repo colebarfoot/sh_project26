@@ -22,10 +22,10 @@ fix             amtype all property/atom i_amtype ghost yes
 fix             extra all property/atom i_amgroup d_redID d_pval ghost yes
 fix             extra2 all property/atom i_polaxe d2_xyzaxis 3
 
-read_data       data/data.ice8.amoeba fix amtype NULL "Tinker Types"
+read_data       data/data.ice7.amoeba fix amtype NULL "Tinker Types"
 
 pair_style      amoeba
-pair_coeff      * * prm/amoeba_water.prm prm/amoeba_ice.key
+pair_coeff      * * prm/amoeba_water.prm prm/amoeba_ice7.key
 
 special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
 

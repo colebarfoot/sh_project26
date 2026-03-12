@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# array batch script for lammps amoeba ice viii sim
+# array batch script for LAMMPS AMOEBA high pressure
+# ice simulation
 #
 #SBATCH --partition=long
 #SBATCH --time=4-00:00:00
@@ -12,10 +13,11 @@
 
 POSITIONAL_ARGS=()
 
+# get cmdline options
 while [[ $# -ne 0 ]]; do
-  case $1 in
+  case "$1" in
   -p | --param)
-    PARAM_FILE=$2
+    PARAM_FILE="$2"
     shift
     shift
     ;;
@@ -33,10 +35,10 @@ done
 set -- "${POSTIONAL_ARGS[@]}"
 
 IN_FILE="${POSITIONAL_ARGS[0]}"
-IN_DIR="$(dirname $IN_FILE)"
+IN_DIR="$(dirname "$IN_FILE")"
 
 if [[ -z "$PARAM_FILE" ]]; then
-  echo "Required parameter: [param_file]"
+  echo "parameter file required"
   exit 1
 else
   echo "Parameter file: ${PARAM_FILE}"
@@ -49,6 +51,8 @@ else
   echo "LAMMPS script: ${IN_FILE}"
 fi
 
+# assigning each slurm array to a simulation
+# with distinct conditions
 found=0
 while IFS= read -r line; do
   IFS=' ' read -r -a paramarr <<<"$line"
@@ -61,13 +65,18 @@ while IFS= read -r line; do
     echo "Pressure: ${P}atm"
 
     echo "Array ID: ${SLURM_ARRAY_TASK_ID}"
-
+    
+    # note!! this will not throw an error if
+    # 'temp', 'press' etc. does not match the 
+    # variable name in the LAMMPS script but
+    # all simulations will run with default 
+    # conditions
     srun lmp-amoeba \
       -in "$IN_FILE" \
       -var temp "$T" \
       -var press "$P" \
-      -var JOB_NO="$SLURM_JOB_ID" \
-      >"$HOME/src/sh-project/lammps/ice_viii/.out/${SLURM_JOB_ID}-${T}-K${P}atm.txt"
+      -var jobid="$SLURM_JOB_ID" \
+      >"$HOME/src/sh-project/lammps/out/isotherm-${SLURM_JOB_ID}-${T}K-${P}atm.txt"
 
     break
   fi

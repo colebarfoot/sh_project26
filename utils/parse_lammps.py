@@ -1,22 +1,29 @@
 #!/home/s2471548/src/sh-project/venv/bin/python3.12
-
+"""
+date: 28-01-2026
+author: Cole Barfoot
+python script to parse thermodynamic output from
+default LAMMPS log files and write into plain 
+text data file
+"""
 import os
 import sys
 import getopt
 import datetime
-
 
 class Lammps:
     def __init__(self, file, cutoff=10):
         self.file = file
         self.data = []
         self.params = []
-
+        
+        # isolate thermodynamic output
         with open(file, "r") as f:
             self.lines = f.readlines()
             while self.parse():
                 continue
-
+        
+        # remove thermo after <cutoff> number of steps
         self.step_cutoff(cutoff)
 
     def parse(self) -> bool:
@@ -65,28 +72,25 @@ class Lammps:
             return
         raise ValueError("too few steps")
 
-
 def opts():
-    file = None
     cutoff = 10
     argv = sys.argv[1:]
-
-    opts, _ = getopt.getopt(argv, "f:c:")
+    
+    # get cmdline options
+    opts, args = getopt.getopt(argv, "c:")
 
     for opt, arg in opts:
-        if opt in ("-f"):
-            file = arg
-        elif opt in ("-c"):
+        if opt in ("-c"):
             try:
                 cutoff = int(arg)
             except ValueError:
                 raise ValueError("cutoff must be an integer")
 
-    if file is None:
-        raise ValueError
+    if len(args) > 1:
+        raise ValueError("only parse one file at a time")
+    file = args[0]
 
     return file, cutoff
-
 
 file, cutoff = opts()
 
@@ -102,7 +106,7 @@ output_file = job_id + "-parsed.txt"
 output_file = os.path.join(output_dir, output_file)
 
 with open(output_file, "w") as f:
-    f.write(f"{datetime.date.today()}        " + f"jobid: {job_id}\n")
+    f.write(f"# {datetime.date.today()}        " + f"jobid: {job_id}\n")
     for param in lammps.params:
         f.write(f"{param} ")
     f.write("\n")

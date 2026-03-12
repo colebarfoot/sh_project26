@@ -1,26 +1,30 @@
 #!/bin/bash
 #
+# date: 28-01-26
+# author: Cole Barfoot
 # shell script to convert exyz files produced by genice2.py
 # to amoeba lammps files using the tinker2lmp.py and exyz2tinker.py
 # tools and the amoeba_water.prm file from the amoeba water example
-#
 #
 ###################################################################
 
 POSITIONAL_ARGS=()
 
+# if the system should be periodic
+# ensure that periodic poundary conditions
+# are specified with '-pbc' flag
 PBC=()
 while [[ $# -gt 0 ]]; do
-    case "$1" in
-        -pbc)
-            PBC+=("$2" "$3" "$4")
-            shift 4
-            ;;
-        *)
-            POSITIONAL_ARGS+=("$1")
-            shift
-            ;;
-    esac;
+  case "$1" in
+    -pbc)
+      PBC+=("$2" "$3" "$4")
+      shift 4
+      ;;
+    *)
+      POSITIONAL_ARGS+=("$1")
+      shift
+      ;;
+  esac;
 done;
 
 set -- "${POSITIONAL_ARGS[@]}"
