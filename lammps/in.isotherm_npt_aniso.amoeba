@@ -89,6 +89,8 @@ minimize        1.0e-6 1.0e-6 10000 10000
 
 thermo          1000
 
+fix             fixp all momentum 1 linear 1 1 1
+
 # set timestep to 1.0fs and damping 
 # parameters (see docs.lammps.org/fix_nh.html)
 variable        dt internal 1.0
