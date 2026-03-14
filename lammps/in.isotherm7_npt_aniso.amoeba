@@ -62,7 +62,7 @@ compute         hmsd hgroup msd
 # entropy)
 compute         myrdf all rdf 100 1 1 1 2 2 2
 fix             myrdf all ave/time 100 10 1000 c_myrdf[*] &
-  file rdf/${jobid}rdf.dat mode vector
+  file rdf/${jobid}-7-rdf.dat mode vector
 
 # vacf (phonon spectrum)
 compute         ovacf ogroup vacf
@@ -78,7 +78,7 @@ thermo_modify   line yaml format none warn ignore &
   colname 1 Timestep colname 6 BoxRatio colname 7 OMSD colname 8 HMSD &
   colname 9 OVACF colname 10 HVACF colname 11 HBONDS
 
-dump            mydmp all custom/gz 1000 dump/isotherm-${temp}K-${press}atm${jobid}.lammpstrj.gz &
+dump            mydmp all custom/gz 1000 dump/isotherm7-${temp}K-${press}atm${jobid}.lammpstrj.gz &
   id type x y z vx vy vz 
 
 # -- Minimization

@@ -44,6 +44,7 @@ slurm-*.out
 # ignore data
 data/
 out/
+unzipped/
 dump/
 input/
 parsed-data/

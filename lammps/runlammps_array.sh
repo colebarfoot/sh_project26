@@ -3,7 +3,7 @@
 # array batch script for lammps amoeba high pressure ice simulation
 #
 #SBATCH --partition=long
-#SBATCH --time=5-00:00:00
+#SBATCH --time=6-00:00:00
 #SBATCH --mem=1G
 #SBATCH --ntasks=8
 #SBATCH --array=1-30
