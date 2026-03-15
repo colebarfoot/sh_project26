@@ -46,7 +46,12 @@ slurm-*.out
 .out/
 .input/
 *.txt
+materials/
 
 # ignore examples and tests
 .amoeba-example/
 .tests/
+
+# === mac ===
+# ds store
+.DS_Store
