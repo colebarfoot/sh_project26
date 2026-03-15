@@ -42,15 +42,19 @@ dump.*
 slurm-*.out
 
 # ignore data directory
-.data/
-.out/
-.input/
+data/
+out/
+input/
+unzipped/
+dump/
+rdf/
+restart/
 *.txt
 materials/
 
 # ignore examples and tests
-.amoeba-example/
-.tests/
+amoeba-example/
+tests/
 
 # === mac ===
 # ds store
