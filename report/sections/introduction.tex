@@ -1,3 +1,166 @@
 \section{Introduction}
 
+% ===== Aims =====
+\begin{itemize}
+    \item suitability for high pressure
+    \item phase boundary behaviour
+    \item ice viip
+    \item other models
+\end{itemize}
 
+% an introduction to the premise
+Ice has long been an object of interest for scientists.
+Its unique properties, particularly its lower density than its liquid phase counterpart, are perplexing.
+Since the study of ice began in earnest in the early 20th century, more than twenty distinct 
+crystal phases have been discovered.
+Many methods have been employed in unravelling ice's mysteries, but in recent years Molecular Dynamics (MD)
+simulations have become increasingly popular.
+MD simulations allow researchers to probe the properties of substances in a range of conditions without 
+setting up expensive experiments.
+This makes MD simulations uniquely suited to investigate extreme conditions such as high pressure and 
+high temperature environments.
+In classical MD (the most common form), intermolecular interactions are modelled by 'force fields' which
+are functions describing molecular potential energies.
+Since MD is a particularly computationally intensive endeavour, early implementations were 'fixed charge
+models' whose molecules exhibited no distortion of their charge distribution due to neighbouring atoms.
+In the intervening years, however, computational resources have improved and more complex models have been
+implemented.
+Advances in modelling water have been made primarily by the introduction of 'polarizable' force fields: 
+molecules whose charges are affected by the behaviour of their neighbours.
+The modern model used in these simulations is the AMOEBA (Atomic Multipole Optimized Energetics for Biomolecular 
+Simulation) force field which has been shown to be superior to certain models (TIP3P, ..., ...) in water, steam,
+and low pressure ice.
+However, AMOEBA is untested for high pressure ice (\textgreater1GPa regime).
+An accurate model for ice at these conditions would be able to provide valuable insight into its behaviour and
+properties.
+In order to assess its suitability, AMOEBA ice will be simulated around the Ice--VIII/Ice--VII phase boundary
+in the 2--3GPa region.
+Following this, AMOEBA Ice--VII will be heated at very high pressures ($\sim$ 8GPa) to investigate the possibility 
+of a new high temperature phase of ice: Ice--VIIp.
+The results will then be compared to some common MD water models and experiment.
+
+\subsection{The Crystalline Structure of Ice}
+\begin{itemize}
+    \item phase diagram
+    \item crystal structures
+    \item Bernal-Fowler ice rules
+    \item Pauling entropy from first principles
+\end{itemize}
+There are many different phases of ice, spanning a wide range of conditions.
+The structure of these phases is well-known by diffraction studies.
+This variation should be compared to other molecules.
+Similar ones (as known by chemists) are \textit{e.g.} $\text{SH}_2$.
+The most common phase on Earth is hexagonal Ice--$1_h$.
+This is the type of ice which one would find in an ice-cube tray.
+It has certain properties which I will talk about briefly.
+The polymorphism of the ice crystal is due to the flexibility of its hydrogen-bond network.
+There is certainly more to be said about this.
+The ices of interest in this examination of AMOEBA are differentiated by their proton
+arrangements: ordered (Ice--VIII) and disordered (Ice--VIII).
+Their crystal structures are described here.
+Ice--VII exhibits a bcc (base-centred cubic) lattice with oxygens at something and the hydrogens 
+elsewhere.
+Its proton disordering produces ferroelectric effects (or ferromagnetic).
+Ice--VIII exhibits an orthorhombic lattice.
+Its proton ordering ensures that there is no net electric dipole moment.
+It is interesting how these phases are paired across a straight-line phase boundary but exhibit
+such different properties.
+
+\subsubsection{Ice Rules}
+The crystalline arrangement of water molecules in ice is governed by a set of rules first proposed 
+by Bernal and Fowler:
+\begin{itemize}
+    \item ice rules go here
+\end{itemize}
+These rules were used by Pauling to calculate the entropy of ice modelled by hexagonal rings as shown in 
+Figure \ref{fig:ice-ring}.
+
+% 
+%        ice-ring figure
+% 
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=1.5]
+        \tikzset{
+            O/.style={
+                circle,
+                draw=black,
+                fill=red,
+                minimum size=10mm,
+                line width=1.2pt,
+                inner sep=0
+            }, H/.style={
+                circle,
+                draw=black,
+                fill=white,
+                minimum size=5mm,
+                line width=1.2pt,
+                inner sep=0
+            }, covalent/.style={
+                line width=1.4pt,
+            }, hbond/.style={
+                line width=1.2pt,
+                dash pattern=on 1.5pt off 1.5pt
+            },
+        }
+
+        \def\r{2}
+        \def\shift{6} % horizontal separation
+        
+        % ==== ring 1 ====
+        \foreach \i in {1,...,6} {
+            \node[O] (O\i) at ({90 + (\i-1)*60}:\r) {};
+        }
+
+        \foreach \i [evaluate=\i as \j using {int(mod(\i,6)+1)}] in {1,...,6} {
+            \path (O\i.center) -- (O\j.center) coordinate[pos=0.40] (Hpos);
+            \node[H] (H\i) at (Hpos) {};
+
+            \draw[covalent] (O\i) -- (H\i); % solid bond
+
+            \draw[hbond] (H\i) -- (O\j); % dashed bond
+        }
+        
+        % ==== ring 2 ====
+        \foreach \i in {1,...,6}{
+            \node[O] (O2\i) at ({\shift + \r*cos(90+(\i-1)*60)}, {\r*sin(90+(\i-1)*60)}) {};
+        }
+
+        \foreach \i [evaluate=\i as \j using {int(mod(\i,6)+1)}] in {1,...,6}{
+            \path (O2\i.center) -- (O2\j.center) coordinate[pos=0.60] (Hpos2); % flipped
+            \node[H] (H2\i) at (Hpos2) {};
+            \draw[hbond] (O2\i) -- (H2\i);
+            \draw[covalent] (H2\i) -- (O2\j);
+        }
+
+        \draw[->, line width=1.5pt] (2.5,0) -- (3.5,0);
+    \end{tikzpicture}
+    \caption{Hexagonal hydrogen-bonded ice ring in flipped configurations}
+    \label{fig:ice-ring}
+\end{figure}
+
+Consider a mole of ice with $N$ molecules. 
+In the Bernal-Fowler structure, a water molecule can orient itself in 6 different ways. 
+However, there are only two unoccupied tetrahedral directions for each oxygen and the chance
+that both can be aligned with the current orientation is $\frac{1}{4}$ hence the total number of 
+configurations of a hexagonal water ring is 
+\begin{equation}\label{eq:ice-ring-entropy}
+    W = \left(\frac{6}{4}\right)^N = \left(\frac{3}{2}\right)^N \quad\implies\quad S = k\log\left[\frac{3}{2}\right]^N
+\end{equation}
+
+\subsection{Molecular Dynamics}
+\begin{itemize}
+    \item motivation
+    \item classical vs. \textit{ab initio}
+    \item Physics implementations and algorithms
+    \item practicalities
+\end{itemize}
+
+\subsection{AMOEBA Force Field}
+\begin{itemize}
+    \item background
+    \item physics
+    \item Successes
+    \item comparison to other models
+\end{itemize}

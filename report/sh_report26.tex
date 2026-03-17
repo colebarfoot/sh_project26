@@ -1,11 +1,6 @@
 % Senior Honours Project Report using SOPA template
 \documentclass[a4paper,12pt]{article}
-\usepackage{fullpage}
-\usepackage[pdftex]{graphicx}
-\graphicspath{ {./figs/} }
-\usepackage[backend=biber,sorting=none]{biblatex}
-\addbibresource{references.bib}
-
+\usepackage{mystyle}
 \begin{document}
 
 %
@@ -66,18 +61,19 @@ Signature:\hspace*{8cm}Date:  27/03/2026
 \pagestyle{plain}                               % Page numbers at bottom
 \setcounter{page}{1}                            % Set page number to 1
 \tableofcontents                                % Makes Table of Contents
+\newpage
 
 %
 %                       Main Text
 %
 
-\input{ ./sections/introduction.tex }
+\input{./sections/introduction.tex}
 
-\input{ ./sections/method.tex }
+\input{./sections/method.tex}
 
-\input{ ./sections/results.tex }
+\input{./sections/results.tex}
 
-\input{ ./sections/conclusion.tex }
+\input{./sections/conclusion.tex}
 
 %
 %                       End of Main Text
@@ -87,6 +83,6 @@ Signature:\hspace*{8cm}Date:  27/03/2026
 \section{References}
 
 \appendix
-\input{ ./sections/appendices.tex }
+\input{./sections/appendices.tex}
 
 \end{document}
