@@ -82,7 +82,7 @@ for opt, arg in opts:
     elif opt in ('-g', '--gibbs'):
         cli_gibbs = True
     elif opt in ('-i', '--ice'):
-        if arg == '7':
+        if arg == '7' or arg == '7p':
             nmols = 2000
         elif arg == '8':
             nmols = 1728
@@ -228,7 +228,6 @@ class Thermo:
 
     def entropy(self):
         dens = self.thermo['Volume']/self.mass
-        print(len(dens))
         
         interp = self.rdf.interpolate
         cutoff = self.cutoff
@@ -308,15 +307,24 @@ class RDF:
         self.timesteps = np.array(self.timesteps, dtype=np.float64)
 
     def interpolate(self, timestep, pair_type):
+        if timestep == "last":
+            timestep = self.timesteps[-2]
+        elif timestep == "first":
+            timestep = self.timesteps[0]
+
+        try:
+            timestep = np.float64(timestep)
+        except ValueError as err:
+            print(f"timestep is not a number: {err}")
+            sys.exit(1)
+
         if pair_type not in self.keys:
             print("unknown pair type")
             sys.exit(1)
         if timestep not in self.timesteps:
-            print(timestep)
-            print(self.timesteps)
             print("invalid timestep")
             sys.exit(1)
-        
+
         step = str(int(timestep))
         step_data = self.rdf[step]
         x = step_data['distance']
@@ -329,7 +337,7 @@ class RDF:
         elif self.interp_type == 'linear':
             f1 = interp1d(x,y,kind='linear')
         else: 
-            print("unknown option")
+            print(f"unknown option: {self.inter_type}")
             sys.exit(1)
 
         return f1, xrange, yrange
@@ -338,6 +346,10 @@ class RDF:
         self.interp_type = new_type
 
 def main():
+    global cli_gibbs, cli_avg, cli_rdf, cli_last, \
+            cli_keys, cli_start, cli_stop, cli_timestep, \
+            cli_pair_type
+
     thermo_data = Thermo(thermo_file, gibbs=cli_gibbs)
     timesteps = thermo_data.thermo['Timestep']
    
@@ -346,7 +358,8 @@ def main():
         if cli_last:
             cli_stop = timesteps[-1]
             cli_start = cli_stop - 100000
-        if not cli_keys and not all((cli_start, cli_stop)): 
+
+        if not cli_keys or not cli_start or not cli_stop: 
             print("keys and startstop not correct")
         
         try:
@@ -361,13 +374,18 @@ def main():
         print("")
     
     if cli_rdf:
-        if not all((cli_timestep, cli_pair_type)):
+        if not cli_timestep or not cli_pair_type:
             print("timestep and pair type not specified")
+
+        timestep = cli_timestep
+
         rdf_data = RDF(rdf_file)
-        g_r, xrange, yrange = rdf_data.interpolate(cli_timestep, cli_pair_type)
+
+        g_r, xrange, yrange = rdf_data.interpolate(timestep, cli_pair_type)
         xinterp = np.linspace(*xrange, num=1000)
-        yinterp = g_r(x)
-        print(f"pair type:{cli_pair_type}      timestep: {cli_timestep}")
+        yinterp = g_r(xinterp)
+
+        print(f"Distance RDF")
         for x, y in zip(xinterp, yinterp):
             print(f"{x} {y}")
     

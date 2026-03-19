@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 
-keys=("Temp" "Volume" "Press" "TotEng" "HMSD" "OMSD" "Enthalpy" "HBONDS" "HVACF" "OVACF" "BoxRatio")
-
 positional_args=()
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -36,10 +34,15 @@ if [[ ! -d "$indir" ]]; then
     echo "not a valid directory"
     exit 1
 fi
-
-out="${indir}/../plots/last${type}.txt"
-echo "${keys[@]}" > "$out"
+out="${indir}/../plots"
 
 for file in "$indir"/parsed-isotherm"$type"-*; do
-    ./data_analysis.py -i "$type" --last -k "${keys[@]}" "$file"
-done >> "$out"
+    new="$(basename "$file")"
+    new="${new#parsed-isotherm"$type"-}"
+    new="${new#*-}"
+    new="${new%-*}"
+    ./data_analysis.py -i "$type" -r last,OO_rdf "$file" > "${out}/oo_rdf${type}-${new}-last.txt"
+    ./data_analysis.py -i "$type" -r last,OH_rdf "$file" > "${out}/oh_rdf${type}-${new}-last.txt"
+    ./data_analysis.py -i "$type" -r last,HH_rdf "$file" > "${out}/hh_rdf${type}-${new}-last.txt"
+    echo "${file} done"
+done

@@ -51,6 +51,9 @@ parsed-data/
 *.txt
 restart.*
 *.dat
+plots/*
+!plots/*.gp
+!plots/*.png
 
 # ignore examples and tests
 amoeba-example/
