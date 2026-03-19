@@ -1,0 +1,120 @@
+# Ice with amoeba !
+# 
+# date modified: 12-03-2026
+# author: Cole Barfoot
+# high pressure ice simulation with AMOEBA (Atomic
+# Multipole Optimized Energetics for Biomolecular
+# Applications) force field in NPT ensemble
+#
+########################################################
+
+units           real
+boundary        p p p
+
+atom_style      amoeba
+bond_style      class2
+angle_style     amoeba
+dihedral_style  none
+
+# -- Force field and simbox settings
+
+fix             amtype all property/atom i_amtype ghost yes
+fix             extra all property/atom i_amgroup d_redID d_pval ghost yes
+fix             extra2 all property/atom i_polaxe d2_xyzaxis 3
+
+read_data       data/data.ice8.amoeba fix amtype NULL "Tinker Types"
+
+pair_style      amoeba
+pair_coeff      * * prm/amoeba_water.prm prm/amoeba_ice.key
+
+special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
+
+# -- Simulation conditions
+
+variable        temp index 250.0
+variable        press index 30000.0
+velocity        all create ${temp} 47583
+
+# -- Thermodynamic output and dump styles
+
+variable        jobid index ""
+
+# isolate oxygen and hydrogen atoms
+# (note: always use 'type' not 'id'!!)
+group           ogroup type 1
+group           hgroup type 2
+
+# c over ratio (lx = ly = a)
+variable        xlen equal lx
+variable        zlen equal lz
+variable        ratio equal "v_zlen/v_xlen"
+
+# mean square displacements
+compute         omsd ogroup msd
+compute         hmsd hgroup msd
+
+# rdf (outputs g(r) and coordination number)
+# contains O-O, O-H, and H-H distributions
+# fix ave/time outputs to file rdf/<jobid>rdf.dat
+# every 1000 timesteps (same as regular thermo
+# output) containing averages of 10 samples
+# (note: can also use to compute two body configurational
+# entropy)
+compute         myrdf all rdf 100 1 1 1 2 2 2
+fix             myrdf all ave/time 100 10 1000 c_myrdf[*] &
+  file rdf/${jobid}rdf.dat mode vector
+
+# vacf (phonon spectrum)
+compute         ovacf ogroup vacf
+compute         hvacf hgroup vacf
+
+# hydrogen bonds with rcut=3.0
+# and acut=30.0
+compute         hbonds all hbond/local 3.0 30.0 ogroup ogroup hgroup dist hdist angle
+
+thermo_style    custom step temp press etotal vol v_ratio &
+  c_omsd[4] c_hmsd[4] c_ovacf[4] c_hvacf[4] c_hbonds
+thermo_modify   line yaml format none warn ignore &
+  colname 1 Timestep colname 6 BoxRatio colname 7 OMSD colname 8 HMSD &
+  colname 9 OVACF colname 10 HVACF colname 11 HBONDS
+
+dump            mydmp all custom/gz 1000 dump/isotherm-${temp}K-${press}atm${jobid}.lammpstrj.gz &
+  id type x y z vx vy vz 
+
+# -- Minimization
+
+minimize        1.0e-6 1.0e-6 10000 10000
+
+# -- Dynamics
+
+thermo          1000
+
+fix             fixp all momentum 1 linear 1 1 1
+
+# set timestep to 1.0fs and damping 
+# parameters (see docs.lammps.org/fix_nh.html)
+variable        dt internal 1.0
+variable        tdamp equal "100.0*dt"
+variable        pdamp equal "1000.0*dt"
+timestep        ${dt}
+
+# equilibrate in NVT ensemble
+fix             mynvt all nvt temp ${temp} ${temp} ${tdamp}
+run             10000
+
+# pressure ramp in isobaric NPT ensemble
+unfix           mynvt
+variable        mypress equal press
+fix             myiso all npt temp ${temp} ${temp} ${tdamp} iso ${mypress} ${press} ${pdamp}
+variable        mypress delete
+run             10000
+
+# run simulation in aniso NPT ensemble,
+# allowing simbox to deform to preferred 
+# shape and output restart file every 100000 in case of
+# premature termination
+# (note: first 250ps are considered equilibration)
+unfix           myiso
+fix             myaniso all npt temp ${temp} ${temp} ${tdamp} aniso ${press} ${press} ${pdamp}
+restart         100000 restart/restart.isotherm-${temp}K-${press}atm-${jobid}
+run             4000000

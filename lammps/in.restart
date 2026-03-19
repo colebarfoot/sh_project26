@@ -1,0 +1,39 @@
+# Ice with amoeba !
+# read restart file
+read_restart    ${restart}
+
+# force field
+
+fix             amtype all property/atom i_amtype ghost yes
+fix             extra all property/atom i_amgroup d_redID d_pval ghost yes
+fix             extra2 all property/atom i_polaxe d2_xyzaxis 3
+
+pair_style      amoeba
+pair_coeff      * * .data/amoeba_water.prm .data/amoeba_ice.key
+
+special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
+
+# system setup
+
+variable        temp internal 200
+variable        press internal 30000
+
+# computes 
+
+group           h_atoms id 2
+group           o_atoms id 1
+compute         h_msd h_atoms msd
+compute         o_msd o_atoms msd
+
+dump            mydmp all custom 1000 isotherm-restart-${temp}K-${press}atm.lammpstrj id type x y z vx vy vz
+
+thermo_style    custom step temp etotal press &
+  c_h_msd[4] c_o_msd[4]
+
+variable        dt internal 1.0
+timestep        ${dt}
+
+fix             myfix all momentum 10 linear 1 1 1
+fix             1 all npt temp ${temp} ${temp} $(100.0*dt) aniso ${press} ${press} $(100.0*dt)
+thermo          1000
+run             20000

@@ -41,16 +41,20 @@ dump.*
 # ignore slurm 
 slurm-*.out
 
-# ignore data directory
+# ignore data
 data/
 out/
-input/
 unzipped/
 dump/
-rdf/
-restart/
-*.txt
+input/
+parsed-data/
 materials/
+*.txt
+restart.*
+*.dat
+plots/*
+!plots/*.gp
+!plots/*.png
 
 # ignore examples and tests
 amoeba-example/

@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# array batch script for lammps amoeba ice viii sim
+# array batch script for lammps amoeba high pressure ice simulation
 #
 #SBATCH --partition=long
-#SBATCH --time=4-00:00:00
+#SBATCH --time=6-00:00:00
 #SBATCH --mem=1G
-#SBATCH --ntasks=16
-#SBATCH --array=1-16
+#SBATCH --ntasks=8
+#SBATCH --array=1-30
 #
 #############################################
 
@@ -20,7 +20,7 @@ while [[ $# -ne 0 ]]; do
     shift
     ;;
   -* | --*)
-    echo "Unknown option: $2"
+    echo "Unknown option: $1"
     exit 1
     ;;
   *)
@@ -30,9 +30,9 @@ while [[ $# -ne 0 ]]; do
   esac
 done
 
-set -- "${POSTIONAL_ARGS[@]}"
+set -- "${POSITIONAL_ARGS[@]}"
 
-IN_FILE="${POSITIONAL_ARGS[0]}"
+IN_FILE="$1"
 IN_DIR="$(dirname $IN_FILE)"
 
 if [[ -z "$PARAM_FILE" ]]; then
@@ -57,17 +57,19 @@ while IFS= read -r line; do
     found=1
     T="${paramarr[1]}"
     P="${paramarr[2]}"
-    echo "Temperature: ${T}K"
-    echo "Pressure: ${P}atm"
+    echo "Temperature: ${T}"
+    echo "Pressure: ${P}"
 
     echo "Array ID: ${SLURM_ARRAY_TASK_ID}"
+
+    mkdir -p "$HOME/src/sh-project/lammps/out"
 
     srun lmp-amoeba \
       -in "$IN_FILE" \
       -var temp "$T" \
       -var press "$P" \
-      -var JOB_NO="$SLURM_JOB_ID" \
-      >"$HOME/src/sh-project/lammps/ice_viii/.out/${SLURM_JOB_ID}-${T}-K${P}atm.txt"
+      -var jobid "$SLURM_JOB_ID" \
+      >"$HOME/src/sh-project/lammps/out/isotherm-${SLURM_JOB_ID}-${T}K-${P}atm.txt"
 
     break
   fi

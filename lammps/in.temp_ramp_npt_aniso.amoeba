@@ -25,39 +25,46 @@ pair_coeff      * * .data/amoeba_water.prm .data/amoeba_ice.key
 
 special_bonds   lj/coul 0.5 0.5 0.5 one/five yes
 
-# initial velocities
-
-velocity        all create ${temp} 42
-
 # computes
 
 group           h_atoms id 2
 group           o_atoms id 1
 
-compute         h_msd h_atoms msd com yes
-compute         o_msd o_atoms msd com yes
-compute         h_vacf h_atoms vacf 
+compute         h_msd h_atoms msd
+compute         o_msd o_atoms msd
+compute         h_vacf h_atoms vacf
 compute         o_vacf o_atoms vacf
 
 # thermo output
 
 thermo_style    custom step temp press etotal vol &
-  c_h_msd[*] c_o_msd[*] c_h_vacf[*] c_o_vacf[*]
+  c_h_msd[4] c_o_msd[4] c_h_vacf[4] c_o_vacf[4] 
 
-dump            mydmp all custom 1000 ${temp}${press}${JOB_NO}.lammpstrj id type x y z vx vy vz
+dump            mydmp all custom 1000 temp_ramp_aniso.lammpstrj id type x y z vx vy vz
+dump_modify     mydmp sort id
+
+# initial conditions
+
+variable        temp equal 250.0
+variable        press equal 30000.0
+
+velocity        all create ${temp} 45746
 
 # minimization
 
-minimize        1.0e-6 1.0e-6 100000 1000000
+minimize        1.0e-6 1.0e-6 100000 100000
 
 # dynamics
-thermo          1000
+thermo          100
 
 variable        dt internal 1.0
+
+timestep        ${dt}
+
 variable        tdamp equal "100.0*dt"
 variable        pdamp equal "1000.0*dt"
 
-timestep        ${dt}
+fix             myfix all momentum 10 linear 1 1 1 
 
 fix             1 all nvt temp ${temp} ${temp} ${tdamp}
 
@@ -73,8 +80,21 @@ run             50000
 
 unfix           2
 
-fix             3 all npt temp ${temp} ${temp} ${tdamp} aniso ${press} ${press} ${pdamp}
+label           temp_ramp
+variable        new_temp equal "temp+10"
+print           "new loop at ${temp}"
 
-run             2000000
+fix             3 all npt temp ${new_temp} ${temp} ${tdamp} aniso ${press} ${press} ${pdamp}
+run             10000
+unfix           3
 
-write_restart   restart.${TEMP}${PRESS}${JOB_NO}
+variable        temp equal ${new_temp}
+fix             4 all npt temp ${temp} ${temp} ${tdamp} aniso ${press} ${press} ${pdamp}
+run             100000
+
+if              "${temp} >= 310" then "jump SELF break" else "unfix 4" "jump SELF temp_ramp"
+
+
+label           break
+write_restart   restart.temp_ramp
+print           "finished!"
