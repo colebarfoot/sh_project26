@@ -52,7 +52,11 @@ if [[ ! -d "$indir" ]]; then
 fi
 
 out="${indir}/../plots/last${type}.txt"
-echo "${keys[@]}" > "$out"
+header=()
+for key in "${keys[@]}"; do
+    header+=("$key" "${key}_std")
+done
+echo "${header[@]}" > "$out"
 
 for file in "$indir"/parsed-isotherm"$type"-*; do
     ./data_analysis.py "$gibbs" -i "$type" --last -k "${keys[@]}" "$file"

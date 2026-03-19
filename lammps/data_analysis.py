@@ -153,7 +153,7 @@ if not stderr:
 
 # thermodynamic data 
 class Thermo:
-    def __init__(self, file, gibbs=False, units='real', cutoff=20, *args):
+    def __init__(self, file, gibbs=False, cutoff=20):
         # temp : kelvin
         # press : giga pascals
         # volume : ang3
@@ -271,7 +271,8 @@ class Thermo:
 
     def time_average(self, keys, start, stop):
         return {
-            key: np.average(self.thermo[key][start:stop])
+            key: (np.average(self.thermo[key][start:stop]),\
+                    np.std(self.thermo[key][start:stop]))
             for key in keys
         }
 
@@ -387,7 +388,8 @@ def main():
 
         avgs = thermo_data.time_average(cli_keys, start, stop)
         for key in cli_keys:
-            print(f"{avgs[key]} ", end="")
+            avg, std = avgs[key]
+            print(f"{avg} {std} ", end="")
         print("")
    
     # do rdf
