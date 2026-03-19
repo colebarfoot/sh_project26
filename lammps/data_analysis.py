@@ -3,7 +3,8 @@
 file: data_analysis.py
 author: Cole Barfoot
 date: 18-03-2026
-python script to analyse sh data
+python script to analyse parsed thermo data and rdf 
+data from lammps simulations
 """
 import os
 import sys
@@ -21,7 +22,7 @@ water_mass = o_mass + 2 * h_mass
 nA = 6.02e23
 
 atm_pa = 101325
-ang3_cm3 = 1e-30
+ang3_m3 = 1e-30
 kcal_j = 4184
 angfs_cms = 1e7
 jmol_evatom = 0.00001036
@@ -55,8 +56,6 @@ usage:
     if --last flag specified then start, stop ignored
 """
 
-verbose = False
-
 longopts=['help', 
           'verbose', 
           'gibbs',
@@ -65,12 +64,13 @@ longopts=['help',
           'last',
           'startstop=', 
           'rdf=',
+          'cutoff=',
           ]
 args = sys.argv[1:]
-opts, args = getopt.getopt(args, 'hvgi:k:ls:r:', longopts=longopts)
+opts, args = getopt.getopt(args, 'hvgi:k:ls:r:c:', longopts=longopts)
 
 # parse cli
-cli_gibbs = cli_avg = cli_rdf = cli_last = False
+verbose = cli_gibbs = cli_avg = cli_rdf = cli_last = False
 cli_keys = []
 cli_start = cli_stop = cli_timestep = cli_pair_type = 0
 for opt, arg in opts:
@@ -88,8 +88,11 @@ for opt, arg in opts:
             nmols = 1728
         else:
             print(f"unknown option: ice {arg}")
-            sys.exit()
+            sys.exit(1)
     elif opt in ('-k', '--keys'):
+        if arg == '':
+            print("no keys supplied")
+            sys.exit(1)
         cli_keys.append(arg)
         while len(args) > 1:
             cli_keys.append(args.pop(0))
@@ -108,8 +111,15 @@ for opt, arg in opts:
         except ValueError as err:
             print(f"rdf not formatted correctly: {err}")
             sys.exit(1)
+    elif opt in ('-c', '--cutoff'):
+        try:
+            cli_cutoff = int(arg)
+        except ValueError as err:
+            print(f"cutoff not formatted correctly: {err}")
+            sys.exit(1)
     else:
-        raise ValueError(f"unknown option: {opt}")
+        print(f"unknown option: {opt}")
+        sys.exit(1)
 
 if cli_keys or cli_last:
     cli_avg = True
@@ -145,8 +155,8 @@ if not stderr:
 class Thermo:
     def __init__(self, file, gibbs=False, units='real', cutoff=20, *args):
         # temp : kelvin
-        # press : pascals
-        # volume : m3
+        # press : giga pascals
+        # volume : ang3
         # energy : ev_atom
         # velocity : cm s-1
         
@@ -164,7 +174,7 @@ class Thermo:
         # intermediate unit conversions
         self.thermo['Press'] *= atm_pa
         self.thermo['TotEng'] *= kcal_j
-        self.thermo['Volume'] *= ang3_cm3
+        self.thermo['Volume'] *= ang3_m3
         self.thermo['OVACF'] *= angfs_cms
         self.thermo['HVACF'] *= angfs_cms
 
@@ -179,6 +189,8 @@ class Thermo:
         # final unit conversions
         self.thermo['TotEng'] *= jmol_evatom/self.natom
         self.thermo['Enthalpy'] *= jmol_evatom/self.natom
+        self.thermo['Press'] /= 1e9
+        self.thermo['Volume'] /= ang3_m3
         
     def thermo_parse(self) -> None:
         data = []
@@ -233,18 +245,20 @@ class Thermo:
         cutoff = self.cutoff
         maxstep = np.max(self.thermo['Timestep'])
         
-        sOO = sOH = sHH = []
+        sOO, sOH, sHH = [], [], []
         for timestep in self.thermo['Timestep']:
             gOO, _, _ = interp(timestep, 'OO_rdf')
             gOH, _, _ = interp(timestep, 'OH_rdf')
             gHH, _, _ = interp(timestep, 'HH_rdf')
-            sOO.append(quad(self.s2, 0, cutoff, args=(gOO))[0])
-            sOH.append(quad(self.s2, 0, cutoff, args=(gOH))[0])
-            sHH.append(quad(self.s2, 0, cutoff, args=(gHH))[0])
+            sOO.append(quad(self.s2, 0, cutoff, args=(gOO,))[0])
+            sOH.append(quad(self.s2, 0, cutoff, args=(gOH,))[0])
+            sHH.append(quad(self.s2, 0, cutoff, args=(gHH,))[0])
             pct = timestep/maxstep * 100
-            print(f"\rentropy calculation: {pct:.1f}%", end="", flush=True)
+            if verbose:
+                print(f"\rentropy calculation: {pct:.1f}%", end="", flush=True)
         
-        print("\nentropy calculation complete !")
+        if verbose:
+            print("")
 
         sOO = np.array(sOO)
         sOH = np.array(sOH)
@@ -283,6 +297,8 @@ class RDF:
         data = []
         numkeys = len(self.keys)
         with open(self.file, 'r') as f:
+            # also structured data so don't
+            # worry about edge cases
             lines = f.readlines()
             for i, line in enumerate(lines):
                 if line.startswith('#'):
@@ -332,6 +348,7 @@ class RDF:
         xrange = (x.min(), x.max())
         yrange = (y.min(), y.max())
         
+        # smooth data
         if self.interp_type == 'spline':
             f1 = CubicSpline(x,y)
         elif self.interp_type == 'linear':
@@ -348,9 +365,9 @@ class RDF:
 def main():
     global cli_gibbs, cli_avg, cli_rdf, cli_last, \
             cli_keys, cli_start, cli_stop, cli_timestep, \
-            cli_pair_type
+            cli_pair_type, cli_cutoff
 
-    thermo_data = Thermo(thermo_file, gibbs=cli_gibbs)
+    thermo_data = Thermo(thermo_file, gibbs=cli_gibbs, cutoff=cli_cutoff)
     timesteps = thermo_data.thermo['Timestep']
    
     # do time averaging
@@ -372,7 +389,8 @@ def main():
         for key in cli_keys:
             print(f"{avgs[key]} ", end="")
         print("")
-    
+   
+    # do rdf
     if cli_rdf:
         if not cli_timestep or not cli_pair_type:
             print("timestep and pair type not specified")

@@ -1,5 +1,6 @@
 #!/home/s2471548/src/sh-project/venv/bin/python3.12
 """
+file: yaml_parser.py
 date: 11-03-26
 author: Cole Barfoot
 script to parse and clean yaml thermo output from 

@@ -1,6 +1,15 @@
 #!/usr/bin/bash
+#
+# file: last_rdf.sh
+# date: 19-03-2026
+# author: Cole Barfoot
+# bash script to isolate interpolated rdf data for final
+# timestep
+#
+##########################################################
 
 positional_args=()
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -t | --type)
