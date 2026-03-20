@@ -50,9 +50,14 @@ usage:
     -r, --rdf       specify timestep and pair type 
                     for rdf or cdf plot
                     [timestep,pair_type]
+    -c, --cutoff    specify cutoff distance for two 
+                    body excess entropy integral
+    -p, --phonon    return vacf between [start, stop]
 
     notes:
     rdf and time averages may be done simultaneously
+    if keys or phonon specified then '--startstop' or 
+    '--last' must also be used
     if --last flag specified then start, stop ignored
 """
 
@@ -65,12 +70,13 @@ longopts=['help',
           'startstop=', 
           'rdf=',
           'cutoff=',
+          'phonon',
           ]
 args = sys.argv[1:]
-opts, args = getopt.getopt(args, 'hvgi:k:ls:r:c:', longopts=longopts)
+opts, args = getopt.getopt(args, 'hvgi:k:ls:r:c:p', longopts=longopts)
 
 # parse cli
-verbose = cli_gibbs = cli_avg = cli_rdf = cli_last = False
+verbose = cli_gibbs = cli_avg = cli_rdf = cli_last = cli_phonon = False
 cli_keys = []
 cli_start = cli_stop = cli_timestep = cli_pair_type = 0
 cli_cutoff = 20
@@ -118,11 +124,13 @@ for opt, arg in opts:
         except ValueError as err:
             print(f"cutoff not formatted correctly: {err}")
             sys.exit(1)
+    elif opt in ('-p', '--phonon'):
+        cli_phonon = True
     else:
         print(f"unknown option: {opt}")
         sys.exit(1)
 
-if cli_keys or cli_last:
+if cli_keys:
     cli_avg = True
 
 # specify required options
@@ -365,15 +373,21 @@ class RDF:
         self.interp_type = new_type
 
 def main():
+    global cli_keys, cli_start, cli_stop, cli_gibbs, cli_cutoff, \
+            cli_last, cli_avg, cli_rdf, cli_phonon 
+
     thermo_data = Thermo(thermo_file, gibbs=cli_gibbs, cutoff=cli_cutoff)
     timesteps = thermo_data.thermo['Timestep']
     
+    if cli_last:
+        cli_stop = timesteps[-1]
+        cli_start = cli_stop - 100000
+    else:
+        cli_start = np.float64(cli_start)
+        cli_stop = np.float64(cli_stop)
+
     # do time averaging
     if cli_avg:
-        if cli_last:
-            cli_stop = timesteps[-1]
-            cli_start = cli_stop - 100000
-
         if not cli_keys or not cli_start or not cli_stop: 
             print("keys and startstop not correct")
         
@@ -405,6 +419,26 @@ def main():
         print(f"Distance RDF")
         for x, y in zip(xinterp, yinterp):
             print(f"{x} {y}")
+
+    if cli_phonon:
+        if not cli_start or not cli_stop: 
+            print("startstop not correct")
+
+        try:
+            start = np.where(timesteps == cli_start)[0][0]
+            stop = np.where(timesteps == cli_stop)[0][0]
+        except IndexError as err:
+            print("timestep not in range")
+
+        hvacf, ovacf = [], []
+        for step in timesteps[start:stop]:
+            step = int(step/1000)
+            hvacf.append(thermo_data.thermo['HVACF'][step])
+            ovacf.append(thermo_data.thermo['OVACF'][step])
+
+        print("Timestep OVACF HVACF")
+        for step, cvo, cvh in zip(timesteps[start:stop], ovacf, hvacf):
+            print(f"{step} {cvo} {cvh}")
     
 if __name__ == "__main__":
     main()

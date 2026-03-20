@@ -7,8 +7,6 @@
 #
 ####################################################
 
-
-
 set terminal cairolatex pdf standalone size 12cm,8cm color colortext
 set datafile columnheaders
 
