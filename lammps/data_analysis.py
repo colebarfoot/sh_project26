@@ -315,31 +315,43 @@ class RDF:
         self.interp_type = 'linear'
 
     def parse(self):
-        step_data = []
-        data = []
         numkeys = len(self.keys)
         with open(self.file, 'r') as f:
             # also structured data so don't
             # worry about edge cases
             lines = f.readlines()
-            for i, line in enumerate(lines):
+
+            nbins = 0
+            step_data = []
+            data = [[] for _ in range(numkeys)]
+            for line in lines:
                 if line.startswith('#'):
                     continue
-
-                parts = line.split()
-
-                if len(parts) == 2:
-                    self.timesteps.append(parts[0])
-                    if data:
-                        arr = np.array(data, dtype=np.float64)
+                if nbins:
+                    linedata = line.split()
+                    for i, num in enumerate(linedata[1:], start=0):
+                        try:
+                            data[i].append(num)
+                        except Exception:
+                            print(timestep)
+                            sys.exit(1)
+                    nbins -= 1
+                    if not nbins:
+                        try:
+                            arr = np.array(data, dtype=np.float64)
+                        except Exception:
+                            print(timestep)
                         data_dict = dict(zip(self.keys, arr))
                         step_data.append(data_dict)
-                    data_dict = {}
-                    data = [[] for _ in range(numkeys)]
-                    continue
-
-                for j, num in enumerate(parts[1:], start=0):
-                    data[j].append(num)
+                        data = [[] for _ in range(numkeys)]
+                else:
+                    try:
+                        timestep, nbins = line.split()
+                    except Exception:
+                        print("data not formatted correctly")
+                        sys.exit(1)
+                    self.timesteps.append(timestep)
+                    nbins = int(nbins)
         
         self.rdf = dict(zip(self.timesteps, step_data))    
         self.timesteps = np.array(self.timesteps, dtype=np.float64)
@@ -362,7 +374,7 @@ class RDF:
         if timestep not in self.timesteps:
             print("invalid timestep")
             sys.exit(1)
-
+        
         step = str(int(timestep))
         step_data = self.rdf[step]
         x = step_data['distance']
