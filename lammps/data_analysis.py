@@ -73,6 +73,7 @@ opts, args = getopt.getopt(args, 'hvgi:k:ls:r:c:', longopts=longopts)
 verbose = cli_gibbs = cli_avg = cli_rdf = cli_last = False
 cli_keys = []
 cli_start = cli_stop = cli_timestep = cli_pair_type = 0
+cli_cutoff = 20
 for opt, arg in opts:
     if opt in ('-h', '--help'):
         print(helpmessage)
@@ -153,7 +154,7 @@ if not stderr:
 
 # thermodynamic data 
 class Thermo:
-    def __init__(self, file, gibbs=False, units='real', cutoff=20, *args):
+    def __init__(self, file, gibbs=False, cutoff=20):
         # temp : kelvin
         # press : giga pascals
         # volume : ang3
@@ -271,7 +272,8 @@ class Thermo:
 
     def time_average(self, keys, start, stop):
         return {
-            key: np.average(self.thermo[key][start:stop])
+            key: (np.average(self.thermo[key][start:stop]),\
+                    np.std(self.thermo[key][start:stop]))
             for key in keys
         }
 
@@ -363,13 +365,9 @@ class RDF:
         self.interp_type = new_type
 
 def main():
-    global cli_gibbs, cli_avg, cli_rdf, cli_last, \
-            cli_keys, cli_start, cli_stop, cli_timestep, \
-            cli_pair_type, cli_cutoff
-
     thermo_data = Thermo(thermo_file, gibbs=cli_gibbs, cutoff=cli_cutoff)
     timesteps = thermo_data.thermo['Timestep']
-   
+    
     # do time averaging
     if cli_avg:
         if cli_last:
@@ -387,7 +385,8 @@ def main():
 
         avgs = thermo_data.time_average(cli_keys, start, stop)
         for key in cli_keys:
-            print(f"{avgs[key]} ", end="")
+            avg, std = avgs[key]
+            print(f"{avg} {std} ", end="")
         print("")
    
     # do rdf

@@ -19,6 +19,7 @@ __pycache__/
 # ignore TeX output files
 *.aux
 *.pdf
+!report/figs/*.pdf
 
 # bib
 *.bcf
@@ -52,9 +53,8 @@ materials/
 *.txt
 restart.*
 *.dat
-plots/*
-!plots/*.gp
-!plots/*.png
+lammps/plots/*
+!lammps/plots/*.gp
 
 # ignore examples and tests
 amoeba-example/
