@@ -15,13 +15,13 @@ gibbs=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -t | --type)
-            type="$2"
+            ice_type="$2"
             shift
             shift
             ;;
         -g | --gibbs)
             keys+=("Gibbs")
-            gibbs="-g"
+            gibbs=1
             shift
             ;;
         -*)
@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [[ -z "$type" ]]; then
+if [[ -z "$ice_type" ]]; then
     echo "no type specified"
     exit 1
 fi
@@ -51,13 +51,18 @@ if [[ ! -d "$indir" ]]; then
     exit 1
 fi
 
-out="${indir}/../plots/last${type}.txt"
+out="${indir}/../plots/last${ice_type}.txt"
+
 header=()
 for key in "${keys[@]}"; do
     header+=("$key" "${key}_std")
 done
 echo "${header[@]}" > "$out"
 
-for file in "$indir"/parsed-isotherm"$type"-*; do
-    ./data_analysis.py "$gibbs" -i "$type" --last -k "${keys[@]}" "$file"
+for file in "$indir"/parsed-isotherm"$ice_type"-*; do
+    if ((gibbs)); then
+        ./data_analysis.py -g -i "$ice_type" --last -k "${keys[@]}" "$file"
+    else
+        ./data_analysis.py -i "$ice_type" --last -k "${keys[@]}" "$file"
+    fi
 done >> "$out"

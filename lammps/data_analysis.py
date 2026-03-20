@@ -73,6 +73,7 @@ opts, args = getopt.getopt(args, 'hvgi:k:ls:r:c:', longopts=longopts)
 verbose = cli_gibbs = cli_avg = cli_rdf = cli_last = False
 cli_keys = []
 cli_start = cli_stop = cli_timestep = cli_pair_type = 0
+cli_cutoff = 20
 for opt, arg in opts:
     if opt in ('-h', '--help'):
         print(helpmessage)
@@ -364,13 +365,9 @@ class RDF:
         self.interp_type = new_type
 
 def main():
-    global cli_gibbs, cli_avg, cli_rdf, cli_last, \
-            cli_keys, cli_start, cli_stop, cli_timestep, \
-            cli_pair_type, cli_cutoff
-
     thermo_data = Thermo(thermo_file, gibbs=cli_gibbs, cutoff=cli_cutoff)
     timesteps = thermo_data.thermo['Timestep']
-   
+    
     # do time averaging
     if cli_avg:
         if cli_last:
