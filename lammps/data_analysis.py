@@ -76,7 +76,7 @@ args = sys.argv[1:]
 opts, args = getopt.getopt(args, 'hvgi:k:ls:r:c:p', longopts=longopts)
 
 # parse cli
-verbose = cli_gibbs = cli_avg = cli_rdf = cli_last = cli_phonon = False
+verbose = cli_gibbs = cli_avg = cli_rdf = cli_last = cli_ice8 = cli_phonon = False
 cli_keys = []
 cli_start = cli_stop = cli_timestep = cli_pair_type = 0
 cli_cutoff = 20
@@ -93,6 +93,7 @@ for opt, arg in opts:
             nmols = 2000
         elif arg == '8':
             nmols = 1728
+            cli_ice8 = True
         else:
             print(f"unknown option: ice {arg}")
             sys.exit(1)
@@ -165,13 +166,20 @@ class Thermo:
     def __init__(self, file, gibbs=False, cutoff=20):
         # temp : kelvin
         # press : giga pascals
-        # volume : ang3
+        # volume : ang3 / atom
         # energy : ev_atom
         # velocity : cm s-1
+        # hbonds : per atom
+        # c/a : divide by sqrt 2 for ice 8
         
         # simulation system data
         self.mass = nmols * water_mass
         self.natom = nmols*3
+        
+        self.ice8 = False
+        if nmols == 1728:
+            self.ice8 = True
+
         self.n = self.natom/nA
         
         # get data
@@ -199,7 +207,11 @@ class Thermo:
         self.thermo['TotEng'] *= jmol_evatom/self.natom
         self.thermo['Enthalpy'] *= jmol_evatom/self.natom
         self.thermo['Press'] /= 1e9
-        self.thermo['Volume'] /= ang3_m3
+        self.thermo['Volume'] /= ang3_m3 * self.natom
+        self.thermo['HBONDS'] /= self.natom
+
+        if cli_ice8:
+            self.thermo['BoxRatio'] /= np.sqrt(2)
         
     def thermo_parse(self) -> None:
         data = []
@@ -300,7 +312,7 @@ class RDF:
         self.rdf = {}
         self.timesteps = []
         self.parse()
-        self.interp_type = 'spline'
+        self.interp_type = 'linear'
 
     def parse(self):
         step_data = []

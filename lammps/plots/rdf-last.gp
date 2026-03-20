@@ -11,9 +11,10 @@ set terminal cairolatex pdf standalone size 12cm,8cm color colortext
 set datafile columnheaders
 
 # files and data
-ices = "7 8"
+ices = "7 8 7p"
 pairs = "oo oh hh"
 temps = "250K 300K 350K 400K 450K 500K"
+ptemps = "450K 500K 540K 600K 650K 680K"
 
 ylabel_for(pair) = \
     pair eq "oo"    ? "$g_{\\mathrm{OO}}(r)$"    : \
@@ -29,6 +30,10 @@ do for [i in ices] {
         set key outside right
         
         # random colours !
-        plot for [t in temps] p."_rdf".i."-".t."-last.txt" using 1:2 with lines title t
+        if (i eq "7p") {
+            plot for [pt in ptemps] p."_rdf".i."-".pt."-last.txt" using 1:2 with lines title pt
+        } else {
+            plot for [t in temps] p."_rdf".i."-".t."-last.txt" using 1:2 with lines title t
+        }
     }
 }

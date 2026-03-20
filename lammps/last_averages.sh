@@ -16,6 +16,7 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         -t | --type)
             ice_type="$2"
+            py_ice_type="$2"
             shift
             shift
             ;;
@@ -40,6 +41,8 @@ if [[ -z "$ice_type" ]]; then
     exit 1
 fi
 
+if [[ "$ice_type" == "7p" ]]; then py_ice_type=7; fi
+
 if [[ ${#positional_args[@]} -gt 1 ]]; then
     echo "too many arguments"
     exit 1
@@ -61,8 +64,8 @@ echo "${header[@]}" > "$out"
 
 for file in "$indir"/parsed-isotherm"$ice_type"-*; do
     if ((gibbs)); then
-        ./data_analysis.py -g -i "$ice_type" --last -k "${keys[@]}" "$file"
+        ./data_analysis.py -g -i "$py_ice_type" --last -k "${keys[@]}" "$file"
     else
-        ./data_analysis.py -i "$ice_type" --last -k "${keys[@]}" "$file"
+        ./data_analysis.py -i "$py_ice_type" --last -k "${keys[@]}" "$file"
     fi
 done >> "$out"

@@ -11,7 +11,7 @@ positional_args=()
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -t | --type)
-            type="$2"
+            ice_type="$2"
             shift 2
             ;;
         -*)
@@ -25,10 +25,11 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [[ -z "$type" ]]; then
+if [[ -z "$ice_type" ]]; then
     echo "type not specified"
     exit 1
 fi
+if [[ "$ice_type" == "7p" ]]; then ice_type="7"; fi
 
 if [[ ${#positional_args[@]} -gt 1 ]]; then
     echo "too many args"
@@ -43,11 +44,11 @@ if [[ ! -d "$indir" ]]; then
 fi
 
 out="${indir}/../plots/"
-for thermo_file in "$indir"/parsed-isotherm"$type"-*; do
+for thermo_file in "$indir"/parsed-isotherm"$ice_type"-*; do
     temp="$(basename "$thermo_file")"
-    temp="${temp#parsed-isotherm"$type"-}"
+    temp="${temp#parsed-isotherm"$ice_type"-}"
     temp="${temp#*-}"
     temp="${temp%-*}"
-    ./data_analysis.py -i "$type" --startstop 2990000,3000000 --phonon "$thermo_file" \
-        > "${out}/vacf${type}-${temp}.txt"
+    ./data_analysis.py -i "$ice_type" --startstop 2990000,3000000 --phonon "$thermo_file" \
+        > "${out}/vacf${ice_type}-${temp}.txt"
 done
