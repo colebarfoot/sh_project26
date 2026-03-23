@@ -1,13 +1,5 @@
 \section{Introduction}
 
-% ===== Aims =====
-\begin{itemize}
-    \item suitability for high pressure
-    \item phase boundary behaviour
-    \item ice viip
-    \item other models
-\end{itemize}
-
 % an introduction to the premise
 Ice has long been an object of interest for scientists.
 Its unique properties, particularly its lower density than its liquid phase counterpart, are perplexing.
@@ -40,12 +32,6 @@ of a new high temperature phase of ice: Ice--VIIp.
 The results will then be compared to some common MD water models and experiment.
 
 \subsection{The Crystalline Structure of Ice}
-\begin{itemize}
-    \item phase diagram
-    \item crystal structures
-    \item Bernal-Fowler ice rules
-    \item Pauling entropy from first principles
-\end{itemize}
 There are many different phases of ice, spanning a wide range of conditions.
 The structure of these phases is well-known by diffraction studies.
 This variation should be compared to other molecules.
@@ -68,11 +54,14 @@ such different properties.
 
 \subsubsection{Ice Rules}
 The crystalline arrangement of water molecules in ice is governed by a set of rules first proposed 
-by Bernal and Fowler:
-\begin{itemize}
-    \item ice rules go here
-\end{itemize}
-These rules were used by Pauling to calculate the entropy of ice modelled by hexagonal rings as shown in 
+by Bernal and Fowler in their very important paper, Theory of Water and Ionic Solution \cite{bernal1933}:\\
+(Direct quote here)\\
+Every molecule is surrounded by four others in a tetrahedron and this arrangement will have least energy if the
+H-nuclei, which subtend and angle of about $109\deg$ at the centre of the molecule, lie opposite two of the
+neighbours, while one of the H-nuclei of each of the remaining neighbours lies opposite a negative corner of the 
+original molecule.
+These rules have formed the basis of much of the study into ice over the decades.
+Consider Pauling's (1933) calculation the entropy of `normal ice' (I$_{h}$) modelled by hexagonal rings as shown in 
 Figure \ref{fig:ice-ring}.
 
 % 
@@ -140,8 +129,11 @@ Figure \ref{fig:ice-ring}.
     \label{fig:ice-ring}
 \end{figure}
 
+This is from him mostly verbatim:
 Consider a mole of ice with $N$ molecules. 
-In the Bernal-Fowler structure, a water molecule can orient itself in 6 different ways. 
+The ice structure may form itself into a six-pointed ring with protons positioned along the sides
+as in Figure \ref{fig:ice-ring}.
+In the Bernal-Fowler scheme, a water molecule can orient itself in 6 different ways. 
 However, there are only two unoccupied tetrahedral directions for each oxygen and the chance
 that both can be aligned with the current orientation is $\frac{1}{4}$ hence the total number of 
 configurations of a hexagonal water ring is 
@@ -149,18 +141,93 @@ configurations of a hexagonal water ring is
     W = \left(\frac{6}{4}\right)^N = \left(\frac{3}{2}\right)^N \quad\implies\quad S = k\log\left[\frac{3}{2}\right]^N
 \end{equation}
 
-\subsection{Molecular Dynamics}
-\begin{itemize}
-    \item motivation
-    \item classical vs. \textit{ab initio}
-    \item Physics implementations and algorithms
-    \item practicalities
-\end{itemize}
+I might be able to provide some more evidence for this by reading a couple more papers.
+Since the flexibility of the hydrogen bond network allows many different crystal arrangements, the
+phase diagram (that is, the plot illustrating which arrangements are present at certain conditions)
+is necessarily complex.
+The important bit of the phase diagram is the part which is above 2 GPa.
+The intersection between Ice--VII/--VIII is interesting because the transition takes place at essentially
+a constant temperature over a considerable pressure increase.
+The two phases are very similar, often reffered to as counterparts.
+The main thing that's different between them is their proton ordering.
+These phases of ice are pretty cool, for reasons that I'm sure I'll be able to explain.
+I think it would be interesting to dive into how their properties are different simply by nature of their
+symmetry properties.
 
+\subsection{Molecular Dynamics}
+Almost since computers became available to physicists, they have been trying to simulate the motion of
+molecules on them.
+With neutron scattering experiments being able to provide good data about the structure of crystals, MD
+simulations give researchers a glimpse at how individual crystal consituents behave.
+It may also be that simulating things is just a lot cheaper, I think this is a good motivator for people.
+Alsom it may be that MD simulations are good for making predictions and setting up physical experiments. \\
+The simplest MD models set up Newton's laws for the system, and solve for positions and velocities by integrating
+numerically each timestep.
+The forces experienced by individual molecules in this regime are represented by a `force field', which
+is essentially the potential energy expression formed by the sum of all the different interactions.
+Some interactions are weaker than others, and in particular some may be very time-consuming to compute,
+and hence are neglected.
+This is necessarily computationally intensive, but generally very accurate at describing the macroscopic 
+properties. 
+Molecules, however, exist in the 0.1 nanometer order of magnitude, and so implementing a classical approach
+has certain drawbacks.
+Monte-carlo MD simulations are also a thing and they have proved to be pretty good. 
+I don't think that their particular function is very relevant but I think a brief overview for completeness
+is a nice touch.
+As computers have gotten better (I imagine?) and physical theories have improved (probably), \textit{ab initio}
+MD simulations have become more popular.
+These are simulations which solve for quantum effects explicitly each timestep using things like Density
+Functional Theories (DFTs) rather than using Newton's laws.
+I think it is important here to see when they first came about, because I think it is important if it turns out that
+this has been a thing since the 70s.
+\textit{Ab initio} is pretty computationally heavy though, and since each timestep is about 1 fs long and interesting
+effects generally happen on the nanosecond ($10^6$ fs) to millisecond ($10^{12}$ fs) range, this creates some issues.
+So people have come up with some pretty decent compromises.
+These days, classical MD simulations are still the \textit{status quo} but with increasingly accurate `force field'
+implementations with parameters determined by extenisve first-principles calculation. 
+Certain water models have proven very popular.
+TIP4P for example is pretty cool.
+There is some room here to talk about certain algorithms whic hare important.
+ 
 \subsection{AMOEBA Force Field}
-\begin{itemize}
-    \item background
-    \item physics
-    \item Successes
-    \item comparison to other models
-\end{itemize}
+What is the AMOEBA force field?
+The simple answer is that it is a model which set out to model the electrodynamic interactions between molecules
+more accurately.
+Electrodynamics can have substantial impact on structure.
+It is (one reason?) why the hydrogen bonding network takes the form it does.
+To be more specific, the AMOEBA force field approached the problem from four directions: Atomic Multipoles, Polarization,
+Induced Dipoles and Ewald Summation \cite{ren2003}. The final form that we get looks like 
+\[ U = U_{\mathrm{bond}} + U_{\mathrm{angle}} + U_{\mathrm{b}\theta} + U_{\mathrm{oop}} + U_{\mathrm{torsion}}
++ U_{\mathrm{vdW}} + U^{\mathrm{perm}}_{\mathrm{ele}} + U^{\mathrm{ind}}_{\mathrm{ele}} \]
+where (this is a quote here) the first five terms describe the short-range valence interactions (stretching, angle bending,
+bond-angle cross term, out of plane bending, and torsional rotation) and the last three terms are the nonbonded vdW
+and electrostatic contributions.
+I think we don't have to worry about some of the first five, but definitely the last htree are important. 
+It is $U^{\mathrm{ind}}_{\mathrm{ele}}$ which really sets this forcefield apart from a few others.
+Here is some of the important math behind the development of the model:
+\begin{description}
+    \item[Atomic multipoles:]
+        here is a short description with some math
+
+    \item[Polarization:] 
+        I expect there will be some more math here
+
+    \item[Induced Dipoles:]
+        some more stuff
+
+    \item[Ewald summation:]
+        some more stuff.
+        be careful with this bit because I don't want to copy Ren and Ponders original paper.
+        It is necessary to show some of the math though.
+\end{description}
+The AMOEBA model was initially developed as part of a water simulation thing. 
+Its parameters were based on data from the liquid and gas-phases, although previous experiments have shown AMOEBA 
+water to be decently accurate at reproducing the properties of low-pressure ice.
+High-pressure ice is a different beast.
+I'm not sure whether other models have shown reasonable success at these conditions or not but I'm sure that 
+I could find out.
+Although I believe that a source will corroborate this claim, electrostatic interactions become increasingly 
+important for solid phases with increasing density.
+The close-packed nature of the molecules mean that there are some pretty crazy electric files running around in there.
+Definitely something to consider.
+At this point I think I should discuss some other models of ice and see what we're working with.

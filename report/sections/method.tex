@@ -10,6 +10,61 @@
     \item{equilibration -- show plot}
 \end{itemize}
 
+There are many different molecular dynamics engines on the market such as GROMACS and some others
+whose names I cannot quite remember.
+The vehicule of choice for these ice simulations however is LAMMPS (Large-scale Atomic/Molecular Massively
+Parallel Simulator).
+It's choice was motivated by two factors: it is highly respected, with native support for OpenMPI and 
+OpenMP and exhaustive documentation, and it recently implemented the AMOEBA force field (which was 
+originally only available on Ponder Lab's own software, Tinker MD).
+This is great for me, a complete novice at molecular dynamics!
+Now, AMOEBA water has its properties listed in a Tinker '.prm' file with some select properties (which
+are of particular importance surely) in Table something along with some of the same parameters
+listed for other models of water and some experimental data.
+The ice structures were generated using a program called GenIce2 (which I'm not sure if it is relevant 
+to mention) and then loaded into LAMMPS.
+For Ice--VII there were 2000 molecules and for Ice--VIII there were 1728.
+There is certainly something intelligent to say here about how this number is sufficient but also necessary
+for observing long-range coordination effects.
+There is also room for a couple of figures demonstrating the unit cells potentially if this wasn't already 
+in the introduction.
+The important thing here is periodic boundary conditions.
+We know that a real periodic crystal extends in all three spatial dimensions for many orders of magnitude
+worth of atoms, but here we only have 5 or so molecules on either side of the ones in the middle.
+We also know that crystal grain boundaries, defects etc. do not behave like the rest of the crystal.
+How then can we be sure that the molecules inside our simulation box will behave as if they are in a
+real crystal?
+We just pretend that they are! 
+Periodic boundary conditions can have a massive effect: I'm sure that there is a certain amount of proof
+that I could insert right here.
+Implementing molecular dynamics simulations can be a bit of an art.
+Maintaining the stability of a system with so many different moving parts can be difficult.
+The energy required in shortening the covalent bond in water by 10\% is huge and there is probably a number
+that I can quote right here.
+Hence system setup and conditions are important.
+If, say, one molecule were placed on top of another, the Pauli and electrostatic repulsions would send the two
+flying off into space immediately.
+The same thing can be said with the initial velocities because if they wiggle too much at the start bad things
+might happend
+Care also needs to be taken with adjusting macroscopic quantities like temperature, pressure and volume.
+Adjustments that are too rapid and/or aggresive may destabilize the system, with molecules potenially ending 
+up too close to each other or something.
+Changing things too slowly eats up computer time.
+Furthemrore, since MD siulations preserve the total energy not the temperature or something like that, small
+adjustments need to be made constantly to ensure that the simulation conditions are consistent.
+Fortunately, people have come up with increasingly clever ways to do this.
+We are doing NPT simulations here, and since the number of particles is always constant in a simulation like 
+this, we are controlling the pressure and the temperature.
+The tools to be implemented are a thermostat and a barostat: spceifically the Nosé-Hoover thermostat and the
+Parinello-Rahman barostat.
+The math behind these and a short description of what they actually do can be put here.
+Potentially could include a plot showing how the temperature and pressure actually oscillate.
+Potentially one of the more important things to mention here is the importance of equilibration,
+and how the oscillations of the controls can mess with results.
+The equilibration period chosen is 250 ps which is pretty standard but also there is some evidence 
+from my simulations that coudld justify this choice.
+The actual implementation of the procedure is shown in Figure \ref{fig:flowchart}.
+
 %
 %         Code diagram
 %
@@ -76,3 +131,35 @@
     \caption{Code flowchart}
     \label{fig:flowchart}
 \end{figure}
+
+
+Allowing the simulation to first equilibrate in the NVT ensemble before adjusting the pressure
+was much more stable.
+Using the anisotropic NPT ensemble for the real thing was motivated mainly by the different known
+unit cell structures of the two phases. 
+Allowing the crystal to bend and stretch was ideally to reduce suppression of phase transitions. \\
+The basic idea was to do simulation runs of the two crystal phases in the same temperature range 
+around the phase boundary at a constant pressure.
+A `cooling run' for Ice--VII and a `heating run' for Ice--VIII, seeing if one (or both) would change
+into the other.
+I should drop some numbers here and with reference to the phase diagram. 
+To start: these were done in the 3 GPa regime, where the VII/VIII boundary is approximately a straight
+line.
+The temperature ranged from 230-520K with increments of 10K. 
+Although the actual phase boundary lies at around 275K at these conditions, as is typical for molecular
+dynamics simulations, a certain amount of hysteresis is expected and the temperatures were required to be
+kicked up a notch
+Furthermore, considering that the VII $\to$ VIII transition is a disorder $\to$ order transition, the
+hysteresis was expected to be more significant and the focus was placed on producing the easier VIII $\to$
+VII transition.
+Because MD takes forever on the computer, and the equilibration period at each temperature is the
+same 250 ps (which was taking about 6hr), doing a temperature ramp \textit{i.e.} heating up the
+same system slowly was impractical.
+The best thing to do was to run simultaneous simulations at different temperatures and inspect the final
+states of each.
+These parallel arrays had an average performance of 0.9819 ns day$^{-1}$ (fake number) and were run 
+for 4000000 timesteps, achieving a total real time of 4 ns.
+Certain optimization choices were made, including choosing an Ewald grid based on numbers which were
+multiples of 8 ($2^3$) and compiling the LAMMPS executable with the AMD compiler suite for the 
+Slurm node architecture.
+
