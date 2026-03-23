@@ -63,6 +63,7 @@ usage:
 
 longopts=['help', 
           'verbose', 
+          'data',
           'gibbs',
           'ice=', 
           'keys=', 
@@ -73,10 +74,10 @@ longopts=['help',
           'phonon',
           ]
 args = sys.argv[1:]
-opts, args = getopt.getopt(args, 'hvgi:k:ls:r:c:p', longopts=longopts)
+opts, args = getopt.getopt(args, 'hvdgi:k:ls:r:c:p', longopts=longopts)
 
 # parse cli
-verbose = cli_gibbs = cli_avg = cli_rdf = cli_last = cli_ice8 = cli_phonon = False
+verbose = cli_gibbs = cli_data = cli_avg = cli_rdf = cli_last = cli_ice8 = cli_phonon = False
 cli_keys = []
 cli_start = cli_stop = cli_timestep = cli_pair_type = 0
 cli_cutoff = 20
@@ -86,6 +87,8 @@ for opt, arg in opts:
         sys.exit()
     elif opt in ('-v', '--verbose'):
         verbose = True
+    elif opt in ('-d', '--data'):
+        cli_data = True
     elif opt in ('-g', '--gibbs'):
         cli_gibbs = True
     elif opt in ('-i', '--ice'):
@@ -131,7 +134,7 @@ for opt, arg in opts:
         print(f"unknown option: {opt}")
         sys.exit(1)
 
-if cli_keys:
+if cli_keys and not cli_data:
     cli_avg = True
 
 # specify required options
@@ -403,10 +406,14 @@ def main():
     thermo_data = Thermo(thermo_file, gibbs=cli_gibbs, cutoff=cli_cutoff)
     timesteps = thermo_data.thermo['Timestep']
     
+    if cli_keys and not all([key in thermo_data.keys for key in cli_keys]):
+        print(f"invalid keys: {cli_keys}")
+        sys.exit(1)
+    
     if cli_last:
         cli_stop = timesteps[-1]
         cli_start = cli_stop - 100000
-    else:
+    elif cli_start and cli_stop:
         cli_start = np.float64(cli_start)
         cli_stop = np.float64(cli_stop)
 
@@ -414,23 +421,43 @@ def main():
     if cli_avg:
         if not cli_keys or not cli_start or not cli_stop: 
             print("keys and startstop not correct")
+            sys.exit(1)
         
         try:
             start = np.where(timesteps == cli_start)[0][0]
             stop = np.where(timesteps == cli_stop)[0][0]
         except IndexError as err:
             print("timestep not in range")
+            sys.exit(1)
 
         avgs = thermo_data.time_average(cli_keys, start, stop)
         for key in cli_keys:
             avg, std = avgs[key]
             print(f"{avg} {std} ", end="")
         print("")
+
+    if cli_data:
+        try:
+            start = np.where(timesteps == cli_start)[0][0]
+            stop = np.where(timesteps == cli_stop)[0][0]
+        except IndexError as err:
+            print(f"timestep not in range: {err}")
+            sys.exit(1)
+
+        for key in cli_keys:
+            print(f"{key} ", end="")
+        print("")
+        
+        for i in range(start, stop):
+            for key in cli_keys:
+                print(f"{thermo_data.thermo[key][i]} ", end="")
+            print("")
    
     # do rdf
     if cli_rdf:
         if not cli_timestep or not cli_pair_type:
             print("timestep and pair type not specified")
+            sys.exit(1)
 
         timestep = cli_timestep
 
@@ -447,12 +474,14 @@ def main():
     if cli_phonon:
         if not cli_start or not cli_stop: 
             print("startstop not correct")
+            sys.exit(1)
 
         try:
             start = np.where(timesteps == cli_start)[0][0]
             stop = np.where(timesteps == cli_stop)[0][0]
         except IndexError as err:
             print("timestep not in range")
+            sys.exit(1)
 
         hvacf, ovacf = [], []
         for step in timesteps[start:stop]:
