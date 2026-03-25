@@ -1,11 +1,35 @@
+% ===================================
+%
+%     preamble for senior honours
+%             report 2026
+%
+% ===================================
+
 \ProvidesPackage{mystyle}
 
 \usepackage{fullpage}
+
+% figures
 \usepackage[pdftex]{graphicx}
 \usepackage{subcaption}
 \graphicspath{ {./figs/} }
+\pdfsuppresswarningpagegroup=1
+
+% references
 \usepackage[backend=biber,sorting=none]{biblatex}
 \addbibresource{references.bib}
+
+% drawings
 \usepackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows}
+\usetikzlibrary{shapes.geometric, angles, quotes, arrows, arrows.meta}
+\usepackage{xcolor}
+\definecolor{startstopcol}{RGB}{200,230,201}   % soft green
+\definecolor{iocol}{RGB}{187,222,251}          % soft blue
+\definecolor{processcol}{RGB}{255,224,178}     % soft orange
+\definecolor{linecol}{RGB}{60,60,60}           % dark grey
+
+% math
 \usepackage{amsmath}
+\usepackage{amsfonts}
+
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}

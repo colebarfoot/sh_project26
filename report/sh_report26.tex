@@ -3,8 +3,6 @@
 \usepackage{mystyle}
 \begin{document}
 
-\newcommand{\h2o}{\ensuremath{\mathrm{H}_2\mathrm{O}}}
-
 %
 %                      Beginning of Title Page
 %
@@ -69,6 +67,9 @@ Signature:\hspace*{8cm}Date:  27/03/2026
 %                       Main Text
 %
 
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+
 \input{./sections/introduction.tex}
 
 \input{./sections/method.tex}
@@ -81,8 +82,12 @@ Signature:\hspace*{8cm}Date:  27/03/2026
 %                       End of Main Text
 %
 
+\setlength{\parindent}{15pt}
+\setlength{\parskip}{0pt plus 1pt}
+
 \newpage
 \section{References}
+\printbibliography[heading=none]
 
 \appendix
 \input{./sections/appendices.tex}
