@@ -35,7 +35,6 @@ do for [ycol in ycols] {
     set output ycol.".tex"
     set xlabel "$T$ / K"
     set ylabel ylabel_for(ycol)
-    set key outside right
     set bars small
     set pointintervalbox 0
     stdev = ycol."_std"
@@ -43,13 +42,15 @@ do for [ycol in ycols] {
     # smoothing options !
     if (ycol eq "HMSD" || ycol eq "OMSD" || ycol eq "BoxRatio" || ycol eq "Volume") {
         set xrange[250:510]
+        set key inside right
 
         plot for [i=1:words(files)] word(files,i) using "Temp":ycol:stdev with yerrorbars lt i pt 5 ps 0.5 notitle, \
              for [i=1:words(files)] word(files,i) using "Temp":ycol with lines lt i \
                 title system("basename ".word(files,i)." .txt | sed 's/^last/Ice /'")
     } else {
         set xrange[*:*] 
-
+        set key inside left
+        
         if (ycol eq "Press") {
             plot for [i=1:words(files)] word(files,i) using "Temp":ycol:stdev with yerrorbars lt i pt 5 ps 0.5 \
                     title system("basename ".word(files,i)." .txt | sed 's/^last/Ice /'")

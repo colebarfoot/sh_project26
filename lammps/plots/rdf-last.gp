@@ -27,7 +27,7 @@ do for [i in ices] {
         set output p."rdf-overlay".i.".tex"
         set xlabel "$r$ / \\AA"
         set ylabel ylabel_for(p)
-        set key outside right
+        set key inside right
         
         # random colours !
         if (i eq "7p") {
