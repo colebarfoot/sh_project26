@@ -27,7 +27,7 @@ ylabel_for(col) = \
     col eq "BoxRatio" ? "$c$/$a$"                                            : col
 
 # colours ! 
-set linetype 1 lc rgb "blue"
+set linetype 1 lc rgb "red"
 set linetype 2 lc rgb "black"
 
 do for [ycol in ycols] {
