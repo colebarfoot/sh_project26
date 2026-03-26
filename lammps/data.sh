@@ -30,5 +30,5 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-out="plots/hmsdvar.txt"
+out="plots/hmsdvar-pre.txt"
 ./data_analysis.py -d -i "$ice_type" -s "${start},${stop}" -k "${dtype[@]}" "$thermo_file" > "$out"
