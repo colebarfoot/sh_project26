@@ -27,6 +27,8 @@ do for [i in ices] {
         set output p."rdf-overlay".i.".tex"
         set xlabel "$r$ / \\AA"
         set ylabel ylabel_for(p)
+        set yrange[*:6]
+        set grid lw 0.5 lc rgb "#cccccc"
         set key inside right
         
         # random colours !
