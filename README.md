@@ -26,6 +26,8 @@ AMOEBA ice is as yet untested for high-pressure.
         *   sh_report26.tex
         *   mystyle.sty
         *   references.bib
+        *   poster/
+             *    poster
         *   sections/
             *   sections
     *   utils/
@@ -38,3 +40,7 @@ This is attributed to the difficulty associated with collective reorientations w
 ice rules.
 Some features appeared at high-pressure and high-temperature which may be indicative of a `plastic' 
 phase but this is as yet unconfirmed.
+
+![Box ratio plot](./report/figs/BoxRatio.pdf)
+![Enthalpy](./report/figs/Enthalpy.pdf)
+![HMSD7p](./report/figs/HMSD7p.pdf)
