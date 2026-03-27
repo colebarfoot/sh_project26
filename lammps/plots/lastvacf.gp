@@ -19,12 +19,12 @@ do for [i in ices] {
     do for [atom in atoms] {
         # configure plot
         set output atom."_vacf-overlay".i.".tex"
-        set xlabel "$t$ / fs"
+        set xlabel "$t$ / ps"
         set ylabel ylabel_for(atom)
         set key outside right
         
         # random colours !
-        plot for [t in temps] "vacf".i."-".t.".txt" using 1:ycol_for(atom) \
+        plot for [t in temps] "vacf".i."-".t.".txt" using ($1/1000 - 2990):ycol_for(atom) \
             smooth csplines with lines title t
     }
 }

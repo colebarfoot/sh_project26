@@ -44,6 +44,10 @@ do for [ycol in ycols] {
         set xrange[250:510]
         set key inside right
 
+        if (ycol eq "HMSD") {
+            set key inside left
+        }
+
         plot for [i=1:words(files)] word(files,i) using "Temp":ycol:stdev with yerrorbars lt i pt 5 ps 0.5 notitle, \
              for [i=1:words(files)] word(files,i) using "Temp":ycol with lines lt i \
                 title system("basename ".word(files,i)." .txt | sed 's/^last/Ice /'")
