@@ -1,23 +1,10 @@
 \section{Results and Discussion}
-
-Allowing the simulation to first equilibrate in the NVT ensemble before adjusting the pressure
-was much more stable.
-Using the anisotropic NPT ensemble for the real thing was motivated mainly by the different known
-unit cell structures of the two phases. 
-Allowing the crystal to bend and stretch was ideally to reduce suppression of phase transitions. 
-
-\par
-These parallel arrays had an average performance of 0.982 ns day$^{-1}$
+The parallel arrays had an average performance of 0.982 ns day$^{-1}$
 for 4000000 timesteps, achieving a total simulation time of 4 ns.
 
 \par
-The thing with this whole section is that I would really like to tie it coherently to the aims of
-the project, there are certain things in the introduction which are relevant here.
-Do my results support any of the claims that I've made?
-
-\par
 Ehrenfest's first-order phase transition is a discontinuity in the first derivative of the
-free energy.
+free energy with respect to thermodynamic quantities \cite{jaeger1998}.
 Hence, identification of phase transitions can be made by plotting the free energy of a system
 against whichever intensive quantity (pressure, temperature, or volume) is being varied.
 Free energy calculations, however, are rarely straightforward since determining the entropy 
@@ -27,18 +14,20 @@ There are other quantities which may be measured, although the variation of whic
 \par
 Since Ice--VII and --VIII are known to have different unit cell dimensions, there are geometric
 properties that can be used to differentiate them.
-Structural properties may also be monitored with the radial distribution function (RDF) $g(r)$, which represents 
-the density of neighbours around each atom.
-RDFs for water molecules are typically partitioned into three: $g_\mathrm{OO}(R)$, $g_\mathrm{OH}(r)$, and
+Structural properties may also be monitored with the radial distribution function (RDF) $g(r)$.
+The RDF describes the probability that an atom may be found at a distance $r$ from a central atom.
+It is given by the density distribution $\rho(r)$ normalised against some `bulk mean density' $\rho$ such that
+$g(r) = \rho(r)/\rho$ \cite{goharshadi2025}.
+RDFs for water molecules are typically partitioned into three parts: $g_\mathrm{OO}(R)$, $g_\mathrm{OH}(r)$, and
 $g_\mathrm{HH}(r)$, where the first subscript represents the central type atom and the second subscript represents
 the neighbour atom type.
 Analysis of these functions should reveal key features such as the the OH distribution peaks at the length of the
-covalent bond and the hydrogen bond ($\approx$1\AA), and the HH distribution peak at the distance between two hydrogen atoms in
-the same molecule ($\approx$1.5\AA).
-Moreover, different levels of hydrogen-ordering should exhibit to different total energy configurations.
+covalent bond and the hydrogen bond ($\approx$1\AA{}), and the HH distribution peak at the distance between two hydrogen atoms in
+the same molecule ($\approx$1.5\AA{}).
+Moreover, different levels of hydrogen-ordering should exhibit different total energy configurations.
 
 \par
-Ice--VIIp should not exhibit significant geometric differences to Ice--VII, so identifying this phase with
+Plastic Ice--VII should not exhibit significant geometric differences to Ice--VII, so identifying this phase with
 any degree of accuracy requires a certain amount of nuance.
 It is predicted that the water molecules in this phase are free to spin themselves about, with the hydrogen
 atoms displacing themselves from their original position in which case there would be an expected increase
@@ -47,16 +36,15 @@ of the hydrogen mean squared displacement $\langle r^2 \rangle _\mathrm{H}$.
 \subsection{VII/VIII Phase Boundary}
 As previously discussed, from the phase diagram in Figure \ref{fig:phase-diagram}, the phase boundary for these
 3 GPa simulations lies around 273K.
-This transition is known to display hysteresis (some stubbornness to transition) due to the challenge of reorienting
-protons from different orderings while simultaneously obeying the Bernal-Fowler rules.
-Need another source here preferably.
+This transition is known to display hysteresis (some stubbornness to transition) \cite{pruzan1994} due to the 
+challenge of reorienting protons from different orderings while simultaneously obeying the Bernal-Fowler rules.
 Consider one water molecule rotating such that its protons become ordered with respect to one of its neighbours. 
 Its new position will be breaking the rules: either there will be two hydrogens opposed to one another, or 
 there will be more than two hydrogens at an oxygen site.
 This will either force the molecule to rotate back to its initial position, or send the next
 molecule into a similar rotation.
 As conditions become more extreme, these sort of random motions begin to happen with more frequency
-and eventually the phase transition will be much more likely to take place. (source?)
+and eventually the phase transition will be much more likely to take place \cite{ackland2025}.
 
 \begin{figure}[ht]
     \centering
@@ -75,12 +63,13 @@ and eventually the phase transition will be much more likely to take place. (sou
     \caption{Comparison of enthalpy per atom and lattice parameter ratio between simulated
     systems of Ice--VII and --VIII with increasing temperature at 3 GPa. VIII $\to$ VII
     transition can be identified at approximately 430K. Ice--VII appears to undergo melting
-    at around 520K.}
+    at around 520K. Note for Ice--VIII the lattice parameter ratio is divided by a factor of 
+    $\sqrt{2}$ as discussed earlier.}
     \label{fig:enthalpy}
 \end{figure}
 
 \par
-Looking to Figure \ref{fig:enthalpy}, at around 430K both a sudden change of the unit cell geometry of the Ice--VIII
+In Figure \ref{fig:enthalpy}, at around 430K both a sudden change of the unit cell geometry of the Ice--VIII
 system may be observed. 
 Below 430K, the lattice parameter ratio is approximately $\frac{c}{a} = 1.45$ (multiplying by $\sqrt{2}$).
 Comparing with the experimental value obtained by neutron diffraction by Kuhs \textit{et al.}, $\frac{c}{a}=1.4551(5)$, 
@@ -92,18 +81,41 @@ Above the transition temperature, Ice--VII maintains its BCC structure with the 
 approximately constant until around 520K.
 As the temperature increases, the enthalpy per atom increases linearly as expected.
 Below the transition temperature, the Ice--VIII structure has a lower enthalpy per atom which can be attributed
-to the more stable proton-ordered configuration. (maybe more detail here?).
+to the more stable proton-ordered configuration. 
+This enthalpy well also will contribute to the hysteresis of the transition by increasing the height of the
+energy barrier.
 At the transition temperature, the enthalpies of the two systems can be seen to coincide and are approximately 
 equal above this point, as would be anticipated if the two phases were identical.
 At around 520K, there is a discontinuity in the enthalpy, which can be identified as the melting point of Ice--VII.
 With reference to the phase diagram (Figure \ref{fig:phase-diagram}), this value is about 100K greater than that
 predicted by calculation.
-There must be some reason for this, ask supervisors.
+This suggests that the intermolecular forces in the AMOEBA model are significantly stronger at high pressure than
+the real value.
+Importantly, however, the model has allowed the crystal to undergo the predicted phase transitions.
+The adjusting of parameters to fine-tune for high pressure could shift the observed transition temperatures
+closer to the experimental and calculated values.
 
 \par
-Inspecting the radial distribution functions in Figure \ref{fig:rdfoverlay}, the most striking feature
-is the sharp peak in the OH distribution at about 1\AA which represents the covalent bonding inside 
-the water molecule.
+The RDFs in Figure \ref{fig:rdfoverlay} contains several key features by which the structure of AMOEBA ice can 
+be assessed. 
+For all curves, there is a widening of the peaks with increasing thermal excitation, as expected.
+Each curve provides useful information about the structure, representing different kinds of bonding:
+
+\par
+The sharp peak in the OH RDF at about 1\AA{}  represents the intramolecular O---H covalent bonding which is the
+expected bond length, with the literature value $b_0 = ?$.
+The second peak can be identified as the two hydrogens which are hydrogen-bonded to the central oxygen in the
+tetrahedral structure predicted by the Bernal-Fowler rules at a bond distance of about 1.9\AA{}.
+As the separation from the oxygen atom increases, peaks corresponding to the hydrogen atoms covalently bonded
+to the neighbouring oxygens in the tetrahedral network and further neighbours are observed.
+Notably, the curves for both Ice--VII and Ice--VIII have similar shapes, which suggests that both structures
+exhibit the tetrahedral structure required by the ice rules with hydrogen- and covalent-bonding lengths remaining
+approximately the same.
+However, due to the tetragonal distortion of the Ice--VIII structure, the low-temperature peaks become wider
+with neighbouring oxygen atoms further apart.
+Another interesting feature is the smoothing of the 3\AA{} peak with an increase in thermal excitation.
+As the hydrogen atoms are vibrating with greater amplitude, the peak becomes smeared.
+Note, this peak smoothing is not indicative of a phase transition.
 
 \begin{figure}[h!]
     \centering
@@ -139,17 +151,39 @@ the water molecule.
     \end{tabular}
     \caption{Overlay of radial distribution function curves $g(r)$ for systems of Ice--VII and
     --VIII with increasing temperature. Three pairwise distributions are shown: HH, OH, and OO.
-    Key features include the covalent bond in at $\approx$1\AA in $g_\mathrm{OH}(r)$ and 
+    Key features include the covalent bond in at $\approx$1\AA{} in $g_\mathrm{OH}(r)$ and 
     the merging of the curves for each system above the transition temperature.}
     \label{fig:rdfoverlay}
 \end{figure}
 
-Furthermore, above the identified transition temperature at around 430K, the curves can be
-seen to become approximately the same for both systems.
-This is as expected with the VIII $\to$ VII transition.
-Also occuring with increasing temperature is a widening of the peaks, which can be attributed
-to thermal expansion.
-Include at least two other features here and with detail.
+\par
+The first peak in the HH RDF can be identified as the distance between the two hydrogen atoms inside the water
+molecule at about 1.5\AA{}.
+Using the $b_0$ from before and the expected bond angle of $104.5^\circ$, this value is sensible.
+Some widening of this peak can be observed, which can be attributed to the AMOEBA model allowing the molecule
+to slightly bend and stretch.
+This variation is not as significant as observed in experiment.
+The next peak represents the hydrogen atoms covalently bonded to the oxygen atom hydrogen-bonded to the central
+hydrogen atom
+With increasing temperature, the peak widens corresponding to stretching of the hydrogen-bond but this effect
+is far greater than for the covalent bond. 
+This is consistent with the `flexibility' of the hydrogen-bond.
+Beyond this second peak, the Ice--VIII structure has more defined wells and peaks at low temperatures than
+Ice--VII which corresponds to the long-range proton ordering.
+
+\par
+In the OO RDF, the first peak of the two structures, which represents the oxygen atoms on neighbouring 
+lattice points, has a key difference: Ice--VII exhibits a minor peak at about 3.2\AA{} which is characteristic
+of a BCC structure but this disappears with the distortion into the tetragonal structure of Ice--VIII.
+The BCC minor peak appears because the lattice point on the base of the unit cell is a distance $(\sqrt{2}/2)a$ \AA{}
+from the origin and the lattice point on the cube vertex is a distance $a$ \AA{} from the origin, but upon distortion
+the difference between the positions of these lattice points shrinks.
+The Ice--VIII structure also exhibits a double peak between 5 and 6\AA{}, which is around the length of the $c$ parameter,
+corresponding to the $\epsilon/2$ shifting.
+
+\par
+At the temperatures above the phase transition, 450K and 500K, $g(r)$ for both systems become the same as the Ice--VIII
+protons become disordered and the structure is allowed to relax.
 
 \begin{figure}[ht]
     \centering
@@ -171,57 +205,129 @@ Include at least two other features here and with detail.
     \label{fig:msd}
 \end{figure}
 
-We can see at the phase transition temperature identified earlier, the MSD 
-for Ice-VIII jumps suddenly which corresponds to the collective rotations of the 
-water molecules into the new disordered state.
-A very interesting feature, though, is that a jump in the MSD of hydrogen atoms 
-of the Ice--VII species occurs, albeit at a lower temperature than Ice--VIII.
-Clearly, since there is no discontinuity in the thermodynamic potential $H$, no 
-phase transition takes place.
-So, this could be attributed to Ice--VII assuming a glass-like state at lower
-temperatures, where movement of hydrogen atoms is forbidden and at a certain temperature
-they are able to break free.
+\par 
+The mean squared displacements (MSD) of the hydrogen and oxygen atoms of both systems in Figure \ref{fig:msd}
+have some interesting features.
 
-\begin{figure}[h]
+\par
+Below phase transition temperature, the hydrogen MSD for Ice--VIII is at an almost constant value
+of about 0.3\AA{} which would be expected for vibrational motion in a fixed position.
+At the phase transition, the MSD changes suddenly to around 1.8\AA{} which corresponds to the
+distance of water molecule rotation about the lattice point, while maintaining the tetrahedral
+bonding.
+This is consisted with the predicted order $\to$ disorder transition from VIII $\to$ VII.
+Above the transition, the hydrogen MSD again remains approximately constant with a stable post-transition
+structure.
+As expected with no identified phase-transition, the hydrogen MSD of Ice--VII is initially approximately 
+the same for all temperatures at about 0.2\AA{}. 
+At a temperature slightly lower than the VIII $\to$ VII transition, however, there is a similar sudden 
+change.
+Although this new structure must still be Ice--VII, below this temperature the ice must have been in a metastable
+amorphous-type structure.
+It appears that with enough thermal energy, the water molecules are able to reorient into another, more energetically 
+favourable disorded state.
+Above this `deglassification' temperature, the new structure is seemingly stable with no further MSD variation.
+
+\par
+The oxygen MSD for Ice--VIII follows a similar trend to the hydrogen MSD. 
+Below the transition temperature, the MSD is approximately a constant value and then as the ice undergoes
+the phase transition the oxygen atoms settle into the positions of the undistorted lattice.
+As the hydrogen atoms begin to rotate about the oxygen atoms, the oxygen atoms have less space to move
+and vibrate which corresponds to a decrease in MSD.
+The Ice--VII structure exhibits this same phenonmenon with a decrease in MSD until a minimum at
+around 450K.
+From this point, the MSD begins to increase with temperature as thermal excitation of the molecules increases
+the amplitude of their vibrations.
+
+\begin{figure}[htb]
     \centering
     \begin{tabular}{c c}
-        \begin{subfigure}{0.42\linewidth}
+        \begin{subfigure}{0.48\linewidth}
             \centering
-            \includegraphics[width=\linewidth]{ice8-post}
-            \caption{Ice--VIII post-transition}
-            \label{fig:ice8post}
-        \end{subfigure}
-        \begin{subfigure}{0.49\linewidth}
+            \includegraphics[width=\linewidth]{hmsdvar-pre.pdf}
+            \caption{Hydrogen MSD below transition}
+            \label{fig:hmsdvarpre}
+        \end{subfigure} & 
+        \begin{subfigure}{0.48\linewidth}
             \centering
-            \includegraphics[width=\linewidth]{ice7-melted}
-            \caption{Ice--VII melted}
-            \label{fig:ice7post}
+            \includegraphics[width=\linewidth]{hmsdvar.pdf}
+            \caption{Hydrogen MSD above transition}
+            \label{fig:hmsdvarpost}
         \end{subfigure}
     \end{tabular}
-    \caption{Snapshots of MD trajectory visualisation with Ice--VIII in both its pre-transition
-    distorted orthorhombic structure and its subsequent relaxation into the BCC structure of
-    Ice--VII. In particular, the difference in the proton-ordering of the two structures is
-    clear.}
+    \caption{Mechanism of order $\to$ disorder transition of Ice--VIII $\to$ Ice--VII. Hydrogen
+    mean squared displacement gradually increases up to a constant value corresponding to successive
+    reorientations of water molecules. Below the transition temperature in (a), some water molecules 
+    without enough energy return to their original positions.}
+\end{figure}
+
+\par
+Since the VIII $\to$ VII phase transition can be described as a rotation of the hydrogen atoms about the 
+oxygen atoms, plotting the hydrogen MSD as a function of time describes how this rotation process occurs
+in practice.
+Figure \ref{fig:hmsdvarpre} is this plot for the Ice--VIII system at 430K, just below the transition temperature
+identified earlier, but still far greater than the real-world value.
+As the simulation progresses, the MSD displacement is trending upwards approximately linearly.
+There are small peaks and dips which represent pockets of molecules which begin to reorient and subsequently
+return to their original positions because of the restrictions of the Bernal-Fowler rules.
+Although this Ice--VIII does not undergo a full phase transition, the trend is towards slow, complete reorientation,
+\textit{i.e.} with more simulation time, it is likely that this system will transition.
+Figure \ref{fig:hmsdvarpost}, however, is the plot for the same system at just above the transition temperature
+at 440K.
+This system exhibits much less back-and-forth reorientation, and does so much more quickly than the lower temperature
+system.
+Clearly, this process is still a gradual, linear reorientation but begins to taper and reach the stable value of
+$\approx$1.7\AA{} towards the end of the simulation.
+Hence, it may be suggested that the observed hysteresis would reduce given signicantly more simulation time.
+The computational limits of the AMOEBA model then are a practical issue for MD simulations to agree with calculated
+and experimental values.
+
+\begin{figure}[htb]
+    \centering
+    \begin{tabular}{c c}
+        \begin{subfigure}{0.45\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{ice8-1000ps}
+            \caption{Ice--VIII at 1000 ps}
+            \label{fig:ice8-1000ps}
+        \end{subfigure}
+        \begin{subfigure}{0.45\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{ice8-3000ps}
+            \caption{Ice--VIII at 3000 ps}
+            \label{fig:ice8-3000ps}
+        \end{subfigure}
+    \end{tabular}
+    \caption{Snapshots of MD trajectory visualisation with Ice--VIII during the phase
+    transition at 440K. In between the two frames, the hydrogen mean squared displacement
+    approximately doubles as the remainder of the molecules in the Ice--VIII phase complete
+    their reorientation.}
     \label{fig:visualisation}
 \end{figure}
 
-These events may be seen visually in the trajectory snapshots in Figure \ref{fig:visualisation}.
-In the low-temperature simulations in \ref{fig:ice8pre}, Ice--VIII has its proton-ordered, distorted structure.
-Above the transition temperature, the tetragonal structure relaxes and the the protons are 
-thrown into disarray in the structure in \ref{fig:ice8post}. 
-This high temperature post-transition Ice--VII is in contrast to the low-temperature structure in \ref{fig:ice7pre}
-which highly regular tetrahedral bonding and corresponds to the identified glassy state below 400K.
-Above the melting point in \ref{fig:ice7post}, the hydrogen bonds are broken and the molecules are free to 
-move from their lattice positions and order themselves entirely randomly.
+\par
+This gradual reordering can be seen in Figure \ref{fig:visualisation} with snapshots of the trajectory
+visualisation of the 440K Ice--VIII system at 1000 ps and 3000 ps where the transition is halfway done
+and complete, respectively.
+At 1000ps there are some pockets of transitioned Ice--VII and of recalcitrant Ice--VIII.
+As the simulation progresses, the pockets of Ice--VII expand in a chain reaction and eventually the entire 
+crystal becomes proton disordered.
+
+\par
+Beyond the melting point, the Ice--VII system breaks its tetrahedral intermolecular bonding and the molecules 
+are allowed to move about freely as in Figure ??.
 
 \subsection{Plastic Ice-VII}
-At a certain temperature, we expect the Ice--VII structure to allow its molecules to freely rotate their hydrogen
-atoms while the oxygen atoms remain in their original positions.
-There is some good stuff to say about these $g(r)$ but again will need to look
-closer at the plots.
-The MSD plot is the most interesting from this section, \ref{fig:msd7p}.
+At a certain temperature, we expect the Ice--VII structure to allow its molecules to `freely' rotate their hydrogen
+atoms while the oxygen atoms remain in their fixed lattice parameters, the `plastic' Ice--VII phase.
+This rotation is not entirely free, because the molecules are still densely packed and effects such as 
+electrostatic repulsion between opposed protons and hydrogen bonding still take place.
+The transition plastic phase also is not accompanied by a discontinuity in the first derivative of the free energy,
+nor any shift in the unit cell geometry, so its identification is challenging.
+Simulations were done in the same format as the VII/VIII phase boundary runs, but at 8 GPa and at higher 
+temperatures in order to investigate this phenomenon.
 
-\begin{figure}[ht]
+\begin{figure}[htb]
     \centering
     \begin{tabular}{c c}
         \begin{subfigure}{0.45\linewidth}
@@ -232,7 +338,7 @@ The MSD plot is the most interesting from this section, \ref{fig:msd7p}.
         \begin{subfigure}{0.45\linewidth}
             \centering
             \includegraphics[width=\linewidth]{BoxRatio7p.pdf}
-            \caption{Lattice parameter ratio with varying temperature}
+            \caption{$c/a$ ratio with varying temperature}
         \end{subfigure}
     \end{tabular}
     \caption{Enthalpy and lattice parameter ratio of the high-pressure, high-temperature
@@ -242,11 +348,7 @@ The MSD plot is the most interesting from this section, \ref{fig:msd7p}.
     \label{fig:enthalpy7p}
 \end{figure}
 
-Inspecting \ref{fig:enthalpy7p}, there is that slight melting thing as well as a constant
-box-ratio.
-No deviation from BCC structure.
-
-\begin{figure}[ht]
+\begin{figure}[h!]
     \centering
     \subfloat{
         \centering
@@ -266,10 +368,29 @@ No deviation from BCC structure.
     \label{fig:rdfoverlay7p}
 \end{figure}
 
-In the RDF overlay for this high-pressure, high-temperature system of Ice--VII (Figure \ref{fig:rdfoverlay7p}),
-there are certain features.
+\par
+In Figure \ref{fig:enthalpy7p}, as predicted, the enthalpy changes linearly as would be expected with increasing
+temperature with no discontinuities.
+At about 670K, however, the enthalpy appears to have a sudden jump similar to the lower pressure Ice--VII which
+corresponds to a melting transition.
+This result is consistent with the a higher calculated melting point for higher pressure.
+The cell geometry also remains cubic, with a $c/a$ ratio of $\approx$1. 
+At the melting point, the box dimensions begin to fluctuate with as the molecules begin to move about freely.
 
-\begin{figure}[ht]
+\par
+The RDFs for the high-pressure, high-temperature run of Ice--VII in Figure \ref{fig:rdfoverlay7p}
+are very similar to the previous run.
+The peaks representing the key features of covalent- and hydrogen-bonding and the BCC unit cell
+structure are observed.
+Beacuse this run is started at high temperature, there are none of the low-temperature minor peaks.
+In all of the simulations there is enough thermal excitation that the curves have been smoothed.
+At the highest temperature, in the melting transition, all of the small peaks begin to flatten out
+towards a constant value of 1.
+Recalling the definition of the radial distribution function, this corresponds to the density distribution
+$\rho(r)$ tending to the `mean-field' density $\rho$, \textit{i.e.} all molecules are randomly distributed
+about the central atom as in a liquid.
+
+\begin{figure}[htb]
     \centering
     \begin{tabular}{c c}
         \begin{subfigure}{0.45\linewidth}
@@ -290,18 +411,39 @@ there are certain features.
     \label{fig:msd7p}
 \end{figure}
 
-Mean squared displacement in Figure \ref{fig:msd7p} has its most interesting feature in the hydrogen 
-MSD with a plateau above around 520K.
-This is in the phase diagram region for plastic ice--vii.
-The oxygen atoms, however, have a decreasing MSD with increasing temperature.
-This is unexpected.
-It may be attributed to the increased motion of the hydrogen atoms, restricting the region of space
-in which each oxygen atom is able to move.
-There are some mechanics here.
+\par
+Since neither the RDF nor the enthalpy provide sufficient detail to identify any sort of 
+change, the most sensible quantity to examine is the MSD in Figure \ref{fig:msd7p}.
+At low temperature, the hydrogen MSD is approximately constant at $\approx$1\AA{} before quickly
+inreasing with temperature up to some constant value between 460K and 510K.
+This `plateau' is significantly long, stretching between around 510K and 650K, with a constant value
+of $\approx$2.3\AA{}. 
+This value is greater than the constant high-temperature MSD value achieved in the lower pressure
+run.
+This could be attributed to hydrogen rotations about the oxygen atoms on the lattice points of a
+greater magnitude than a reorientation from some metastable Ice--VII state as before.
+These larger rotations may be characteristic of a plastic phase, although in order to confirm this,
+more evidence is required.
+Above this plateau, the hydrogen MSD begins to increase rapidly with the identified melting transition.
+The hydrogen MSD increase throughout the run is accompanied by a reduction in the oxygen MSD
+as observed in the low-pressure run.
+This is most likely due to the greater motion of the hydrogen atoms, allowing less space to the oxygen
+atoms for movement.
+As the melting point is reached, the oxygen atoms begin to disperse rapidly from their initial
+positions as expected.
 
-\begin{figure}[ht]
+\begin{figure}[htb]
     \centering
-    \includegraphics[width=0.4\linewidth]{ice7p}
+    \begin{tabular}{c c}
+        \begin{subfigure}{0.45\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{ice7p-2000}
+        \end{subfigure} &
+        \begin{subfigure}{0.45\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{ice7p-2100}
+        \end{subfigure}
+    \end{tabular}
     \caption{Trajectory visualisation snapshot of high-pressure, high-temperature Ice--VII
     in the `plateau' region of the hydrogen mean squared displacement with hydrogen atoms
     not aligned with the tetrahedral bonding network, indicating the potential presence of a
@@ -309,6 +451,9 @@ There are some mechanics here.
     \label{fig:ice7p}
 \end{figure}
 
-The visualisation of this plateau region \ref{fig:ice7p} displays hydrogen atoms unaligned with
-the expected tetrahedral bonding network required by the Bernal-Fowler rules.
-This may be the plastic phase that is being looked for.
+\par
+The plateau region is visualized at the 540K point at 2000ps and 2100ps 
+in Figure \ref{fig:ice7p}, demonstrating hydrogen atoms seemingly 
+randomly oriented about oxygen atoms which are still in their original lattice points.
+The hydrogen atoms are oriented differently in the images, characteristic of the type of continuous reorientation
+of water molecules in plastic Ice--VII.

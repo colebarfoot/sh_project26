@@ -5,8 +5,10 @@ successfully reproducing real-world conditions in simulation.
 Damping parameters must be chosen to balance between rapid changes which
 destabilise the system and slow changes which fail to sufficiently stabilise the 
 conditions.
+Below are some figures representing the pressure and temperature stability of 
+the NPT simulations, Figure \ref{fig:stability}.
 
-\begin{figure}
+\begin{figure}[htb]
     \centering
     \begin{tabular}{c c}
         \begin{subfigure}{0.45\linewidth}
@@ -18,6 +20,62 @@ conditions.
             \includegraphics[width=\linewidth]{Press7p.pdf}
         \end{subfigure}
     \end{tabular}
-    \caption{here is some stability stuff}
+    \caption{Simulation pressure for increasing temperature with 3 GPa and 8 GPa
+    NPT ensemble runs.}
     \label{fig:stability}
+\end{figure}
+
+\section{Supplementary Material}
+
+Some extra plots describing the phase transition from VIII $\to$ VII including 
+volume per atom (which decreases as expected) and total energy which follows a
+similar trend to the enthalpy in Figure \ref{fig:extra}.
+
+\begin{figure}[h]
+    \centering
+    \begin{tabular}{c c}
+        \begin{subfigure}{0.45\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{Volume.pdf}
+        \end{subfigure} &
+        \begin{subfigure}{0.45\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{TotEng.pdf}
+        \end{subfigure}
+    \end{tabular}
+    \caption{Some extra plots describing the VIII $\to$ VII phase transition.}
+    \label{fig:extra}
+\end{figure}
+
+\newpage\noindent
+Some VACF plots (phonon spectrum) sampled every 1 ps in Figure \ref{fig:vacf}.
+This is unfortunately not frequently enough to isolate real phonon modes with any accuracy,
+these could correspond to the `breathing mode' --- the fluctuations of the simulation box with
+the barostat adustments.
+
+\begin{figure}[htb]
+    \centering
+    \begin{tabular}{c c}
+        \textbf{Ice-VII} & \textbf{Ice-VIII} \\[0.5em]
+
+        \begin{subfigure}{0.45\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{H_vacf-overlay7.pdf}
+        \end{subfigure} &
+        \begin{subfigure}{0.45\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{H_vacf-overlay7.pdf}
+        \end{subfigure} \\
+
+        \begin{subfigure}{0.45\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{H_vacf-overlay7.pdf}
+        \end{subfigure} &
+        \begin{subfigure}{0.45\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{H_vacf-overlay7.pdf}
+        \end{subfigure} 
+    \end{tabular}
+    \caption{VACF plots potentially capturing the `breathing mode' of the simulation box}
+    \label{fig:vacf}
 \end{figure}

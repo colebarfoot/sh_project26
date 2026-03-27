@@ -1,0 +1,39 @@
+\section{Conclusion}
+
+The aim of this project was to implement the AMOEBA polarizable force field for high pressure 
+water ice and assess its suitability for these types of classical MD simulations.
+Polarizable force fields have not been widely used because of the amount of computational 
+resources required to iteratively calculate induced dipoles.
+Computational resources, however, have improved in recent years, making more complex 
+force fields practical.
+This approach is still generally favoured over \textit{ab initio} simulations for 
+large systems which still face significant computational difficulties.
+
+\par
+High-pressure ice is well suited for benchmarking the accuracy of a novel potential 
+due to the complex interactions present, as governed by the Bernal-Fowler ice rules.
+The order/disorder Ice--VII/--VIII phase transition is important in the field of high-pressure
+ice, occupying a significant portion of the phase diagram abouve 2 GPa.
+Furthermore, the unique properties of Ice--VII allow a high-pressure transformation into
+a `plastic' ice where the hydrogen atoms are able to rotate about the lattice points.
+
+\par
+AMOEBA was able to reproduce the VII/VIII phase transition at 3 GPa, albeit with
+significant hysteresis.
+Inspection of the hydrogen mean-squared displacement of the system just below
+the simulated transition temperature revealed that some molecules had
+begun to ondergo a reorientation.
+This suggests that, given more time simulation time, the observed hysteresis may be
+reduced.
+The complexity of this potential, however, may prohibit such simulations due to the 
+sheer quantity of computational power required.
+At higher pressures and higher temperatures, AMOEBA Ice--VII displayed hydrogen rotation.
+Whether this rotation can be classified as the `plastic' phase, or simply a relaxation of 
+the Ice--VII structure from some metastable state is unclear.
+In either case, the AMOEBA ice was able to melt.
+
+\par
+In future research, it may be interesting to see whether AMOEBA Ice--VII would be able to 
+transition into ordered Ice--VIII which is known to involve a complicated kinetic pathway.
+Moreover, detailed calculations on high-pressure, high-temperature runs might reveal more
+information about plastic Ice--VII.

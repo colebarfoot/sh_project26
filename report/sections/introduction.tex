@@ -5,7 +5,7 @@
 The nature of planet Earth depends on the abundance of H$_2$O in all three phases: vapour, water, and ice.
 Currently, it covers 70\% of the globe, with 10\% of the land mass carpeted in its solid phase.
 Hence, ice has long been an object of interest for scientists whose properties have given rise to important
-insights in fields as diverse as climate science and astrophysics.
+insights in fields as diverse as glaciology and astrobiology.
 
 \par
 Water molecules are comprised of two hydrogen atoms (which may be labelled henceforth as simply protons) 
@@ -66,17 +66,16 @@ has an H --- O --- H angle of 104.52$^\circ$ (Figure \ref{fig:water}).
 
 \par
 With its valence band structure having two half-filled electron orbitals, oxygen is commonly 
-found in this type of tri-atomic structure, like the prolific CO$_2$ (carbon dioxide).
-Water is unique, however due to the intermolecular interactions labelled as `Hydrogen bonds'.
-This is a type of bonding which occurs when a proton is present in between two of the highly electronegative
-atoms (that is, an atom that attracts electrons) Flourine, Nitrogen, or Oxygen.
+found in this type of tri-atomic structure.
+Water is unique, however due to the intermolecular interactions labelled as `hydrogen bonds'.
+This type of bonding occurs when a proton is present in between two of the highly electronegative
+atoms (an atom that attracts electrons) Flourine, Nitrogen, or Oxygen.
 Unlike permanent-dipole --- permanent-dipole attractive intermolecular forces which are present in similar
 polar molecules, the hydrogen bond is particularly strong and accounts for the tetrahedral bonding
 network in ice \cite{petrenko2002}.
 Due to the flexibility of this hydrogen-bonding arrangement, ice can form a remarkable number of distinct
-crystal phases.
-Since the study of ice began in earnest in the early 20th century, more than twenty have been discovered.
-This is in sharp contrast to other common materials, such as iron, which only has four known solid phases.
+crystal phases, with more than twenty having been discovered since the early 20th century in sharp contrast 
+to other common materials, such as iron, which only has four known solid phases \cite{hansen2021}.
 
 \par
 In recent years Molecular Dynamics (MD) simulations have become increasingly popular, allowing researchers to 
@@ -85,8 +84,8 @@ In classical MD, atoms are treated as point particles with a mass in space whose
 `force fields': functions describing atomic potential energies and typically comprise several distinct terms 
 such as bond energies, intramolecular bond bending and stretching, and intramolecular interactions such as dipole 
 electrostatic repulsion/attraction and van der Waals (vdW) forces.
-Since MD is a particularly computationally intensive, early simulations used `fixed charge models' which considered
-only pairwise Coulomb interactions between point-charge atoms with a partial charges $q_i$ fitted from experimental data
+Since MD is particularly computationally intensive, early simulations used `fixed charge models' which considered
+only pairwise Coulomb interactions between point-charge atoms with a partial charge $q_i$ fitted from experimental data
 and a `mean-field polarization' determined from these $q_i$. 
 Despite the known importance of `interactive' dipoles, \textit{i.e.} those affected by molecular configuration and 
 the environment, these early models achieved surprising success \cite{riniker2018}. 
@@ -95,43 +94,43 @@ practical.
 
 \par
 Advances in modelling water have been made primarily by the introduction of `polarizable' force fields which possess
-these interactive dipoles.
-The goal of this report is to model high-pressure ice with one of these such potentials: the Atomic Multipole 
-Optimized Energetics for Biomolecular Simulation (AMOEBA) force field.
-Higher pressures causes molecules to be pushed more closely together which leads to the overlapping of electron
+interactive dipoles.
+The aim of this report is to model high-pressure ice with the Atomic Multipole 
+Optimized Energetics for Biomolecular Applications (AMOEBA) force field.
+Higher pressures cause molecules to be pushed more closely together leading to the overlapping of electron
 clouds of neighbouring molecules, inducing a Pauli repulsive force.
 In order to compensate for this repulsion, electron clouds will contract slightly, reducing polarization (source!).
-It may be that polarizable models which are able to include this effect will produce more accurate results.
-Although AMOEBA has shown good agreement with experiment in less extreme conditions \cite{ren2003}, it is 
-currently untested for high-pressure.
+It may be that polarizable models which are able to model this effect will produce more accurate results.
+Although AMOEBA has shown good agreement with experiment and first-principles calculation in less extreme conditions 
+\cite{ren2003}, it is currently untested for high pressure.
 
-\begin{figure}
+\begin{figure}[htb]
     \centering
     \includegraphics[width=0.65\linewidth]{phase-diagram}
     \caption{Phase diagram of water for pressures below 3 GPa. Region of interest on right-hand edge with 
-    Ice--VII/--VIII phase boundary at approximately 3 GPa and 273K. Full black lines represent computed
-    phase boundaries, whereas dotted black lines extrapolated from computation and full grey lines have
-    greater uncertainty than black lines. Figure from \cite{komatsu2022}.}
+    Ice--VII/--VIII phase boundary at approximately 3 GPa and 273K. Black and red numerals represent proton-disordered 
+    and -ordered phases, respectively. Blue numerals are metastable phases. The red arrow between Ice--VII and
+    Ice--VIII represents an order/disorder transition. Figure from \cite{hansen2021}.}
     \label{fig:phase-diagram}
 \end{figure}
 
 \par
-In order to assess its suitability, AMOEBA ice will be simulated around the Ice--VIII/Ice--VII phase boundary
-in the 3 GPa region.
+In order to assess its suitability for high pressure, AMOEBA ice will be simulated around the Ice--VIII/Ice--VII 
+phase boundary in the 3 GPa region.
 These phases of ice are particularly relevant as they occupy a significant portion of the phase diagram in
-the region above 2 GPa, see Figure \ref{fig:phase-diagram}, and they exhibit the densest packing of all
+the region above 2 GPa (see Figure \ref{fig:phase-diagram}) and exhibit the densest packing of all
 known arrangements.
-It has been postulated that these crystals may be found in places as exotic as the distant moons of Europa and
-Callisto \cite{petrenko2002}.
+Ice--VII and --VIII are not typically found on Earth, but it has been postulated that these crystals may be 
+found in places as exotic as the distant moons of Europa and Callisto \cite{petrenko2002}.
 Following this, AMOEBA Ice--VII will be heated at very high pressures (8 GPa) to investigate the structure
-of a new high temperature phase of ice, Ice--VIIp, which has recently been observed in diffraction 
+of a new high temperature phase of ice, plastic Ice--VII, which has recently been observed in diffraction 
 experiments by Rescigno \textit{et al.} \cite{rescigno2025}.
 
 \subsection{The Crystalline Structure of Ice}
-Of the more than twenty known phases, the majority of ice found on Earth is accounted for by a single phase: 
+Although ice has more than twenty known phases, the majority found on Earth is accounted for by a single phase: 
 hexagonal Ice--I$_h$.
-It is obtained by the freezing of liquid water at atmospheric conditions.
-The properties and structure of Ice--I$_h$ were those which first were examined by researchers in this field.
+It is obtained by the freezing of liquid water at ambient conditions.
+The properties and structure of Ice--I$_h$ were the first to be examined by researchers in this field.
 Remarkably, this ice has lower density than its liquid counterpart, which is the cause of burst pipes in
 winter and floating icebergs.
 It is also characterised by a lack of long-range ordering in its protons, which gives rise to a residual
@@ -140,8 +139,8 @@ These unique properties prompted the formalisation of the theory of how water mo
 phase.
 
 \subsubsection{Ice Rules}
-The `ice rules' which govern the crystalline arrangment of ice were first proposed by
-by the eponymous Bernal and Fowler in their \textit{Theory of Water and Ionic Solution} (1933) \cite{bernal1933}:
+The `ice rules' which govern the crystalline arrangment of ice were first proposed 
+by Bernal and Fowler in their \textit{Theory of Water and Ionic Solution} (1933) \cite{bernal1933}:
 \textit{Every molecule is surrounded by four others in a tetrahedron and this arrangement will have least energy if the
 H-nuclei, which subtend and angle of about $109^\circ$ at the centre of the molecule, lie opposite two of the
 neighbours, while one of the H-nuclei of each of the remaining neighbours lies opposite a negative corner of the 
@@ -214,32 +213,33 @@ whose structure can be described by hexagonal rings with an oxygen atom on each 
         \draw[->, line width=1.5pt] (2.5,0) -- (3.5,0);
     \end{tikzpicture}
     \caption{Hexagonal hydrogen-bonded ice ring in flipped configurations representing different microstates
-    in the Pauling entropy model. These hexagonal rings are present in real-world Ice-I$_h$. Figure produced
+    in the Pauling entropy model. These hexagonal rings are present in real-world Ice--I$_h$. Figure produced
     by author.}
     \label{fig:ice-ring}
 \end{figure}
 
-For this calculation, consider a mole of Ice--I$_h$ with $N$ molecules organised in these hexagonal rings. 
+For Pauling's calculation, consider a mole of Ice--I$_h$ with $N$ molecules organised in these hexagonal rings. 
 In the Bernal-Fowler scheme, an arbitrary water molecule can orient itself in 6 different ways. 
-However, there are only two unoccupied tetrahedral directions for each oxygen. The chance
-that both directions can be aligned with the current molecular orientation is $\frac{1}{4}$ 
+However, there are only two unoccupied tetrahedral directions for each oxygen. 
+The chance that both directions can be aligned with the current molecular orientation is $\frac{1}{4}$ 
 giving a total number of possible configurations and a configurational entropy given by Boltzmann's formula
 
 \begin{equation}\label{eq:ice-ring-entropy}
     W = \left(\frac{6}{4}\right)^N = \left(\frac{3}{2}\right)^N \quad\implies\quad S = Nk_B\log\left(\frac{3}{2}\right)
 \end{equation}
 
-where $k_B$ is Boltzmann's constant.
+where $k_B$ is Boltzmann's constant which gives a value of $S$ around 3.4 J mol$^{-1}$ K$^{-1}$.
 This simple calculation proved to have remarkable agreement with experiment.
-The hydrogen sites in structures like these are said to be half-hydrogen sites, since the water molecules
-are able to orient themselves with their hydrogen atoms in either microstate in Figure \ref{fig:ice-ring} with
-equal probability.
+The hydrogen sites in disordered structures like these are said to be half-hydrogen sites, since the water molecules
+are able to orient themselves with their hydrogen atoms in either of the microstates illustrated in 
+Figure \ref{fig:ice-ring} with equal probability.
+High-pressure states are believed to obey these ice rules \cite{ackland2025}.
 
 \subsubsection{Ice--VII and Ice--VIII}
 With reference to the phase diagram in Figure \ref{fig:phase-diagram} the two crystal phases that 
 this report will focus on, Ice--VII and --VIII, form from around 2 GPa.
 They are differentiated primarily by their long-range proton ordering: Ice--VII is disordered and Ice--VIII
-is disordered.
+is ordered \cite{nelmes1998,kuhs1984}.
 
 \begin{figure}[ht]
     \centering
@@ -264,66 +264,70 @@ is disordered.
 \end{figure}
 
 \par
-% Check this!!
 Ice--VII has a BCC (base-centred cubic) crystal structure which can be generated by
 two interpenetrating, unconnected Ice--I$_c$ (the cubic version of Ice--I$-h$) lattices shown in Figure
 \ref{subfig:ice7cell}.
 The proton-disordering gives half-hydrogen sites which are denoted with half-filled circles.
 Hence, Ice--VII has the same Pauling entropy as Ice--Ih given in \ref{eq:ice-ring-entropy}.
-The long range proton disordering means that the crystal has a net dipole moment.
 
 \par
 Upon the proton-ordering transition to Ice--VIII, there is a distortion of the BCC unit cell as the
 two interpenetrating lattices are shifted by $\epsilon$/2 into the orthorhombic structure in 
 Figure \ref{subfig:ice8cell}, with a $\frac{c}{a}$ ratio of ~1.45.
-This ratio is typically expressed, however, as $\frac{c}{\sqrt{2}a}$ to encapsulate the deviation from
+This ratio is typically expressed as $\frac{c}{\sqrt{2}a}$ to encapsulate the deviation from
 the BCC lattice.
-Because of the complete proton-ordering, the hydrogen sites become full.
-Furthermore, proton ordering ensures that there is no net electric dipole moment.
+Because of the complete proton-ordering, the hydrogen sites become full and the crystal is 
+antiferroelectric (no net polarization) \cite{petrenko2002}.
 
 \par
-I need something here to link to the next section. Also this section may be too dry.
+Plastic crystal phases are an intermediate between solids and liquids.
+The properties of Ice--VII may allow its hydrogen atoms to rotate almost freely as if in a liquid at 
+high temperatures.
+The strongly directional hydrogen bonds which are characterised by Bernal and Fowler may suppress
+such a state \cite{rescigno2025}.
+
+\par
+Knowledge of crystal structure is essential for interpreting results from either simulation or experiment.
+With an understanding of ice molecular arrangements, predictions can be made about its properties.
 
 \subsection{Molecular Dynamics}
-Almost since the advent of computers, physicists have been attempting to implement some for of Molecular
+Almost since the advent of computers, physicists have been attempting to implement some form of Molecular
 Dynamics simulation.
-With neutron scattering experiments providing good data about the structure of crystals, parameter fitting is
+Computational resources are improving and parameter fitting is
 increasing in accuracy and as a result, the atomic potential functions (`force fields') are better at reproducing
 physical results.
 
 \par
 Classical MD, the simplest and most prolific paradigm, treats atoms as point particles, setting up Newton's laws 
-for the system with forces described by the force field, and integrating to obtain positions and velocities.
+for the system with forces described by the force field, and integrating to obtain positions and velocities 
+\cite{vollmers2025}.
 As discussed earlier, these force fields contain many different terms describing how the atoms interact.
 There are some interactions which are weaker than others, and in particular may be very time-consuming to compute,
 and hence may be neglected.
 Although some of these neglected effects may have theoretical significance, models such as fixed-charge models
-have still found agreement with experiment.
+have still found agreement with experiment \cite{guillot2002}.
 However, atoms are known to exist in the `quantum world', and so implementing a classical approach
 has certain drawbacks.
 As computers have become more powerful, \textit{ab initio} MD simulations, which solve for quantum effects explicitly 
-each timestep using things like Density Functional Theories (DFTs) rather than using Newton's laws have become
-practical.
+each timestep using electronic structure theories `on the fly' rather than using fixed potentials have become practical
+\cite{iftimie2005}.
 Since the timescale of certain interesting physical phenomena like phase transitions may be in the micro- to millisecond
-order of magnitude, far greater than the typical MD timestep of 1 femtosecond, the strain placed on computational 
+order of magnitude (far greater than the typical MD timestep of 1 femtosecond) the strain placed on computational 
 resources by complex \textit{ab initio} calculations may still prove to be too much.
-Hence, classical MD simulations are still the \textit{status quo} for large systems but with increasingly accurate 
+Hence, classical MD simulations are the \textit{status quo} for large systems but with increasingly accurate 
 force fields that include more complex effects and parameters determined by extensive first-principles calculation. 
-This includes the `polarizable' models which are the focus of this report.
-I think there is one more thing to say here.
+This includes the `polarizable' models, like AMOEBA, which are the focus of this report \cite{halgren2001,finney2001}.
 
 \par
 In the evolution of the computer simulation of water, countless potentials have been developed,
 the most notable of which are the TIP4P/TIP5P family.
-Whether a potential is the best is a question best answered by its agreement with experimentally measured
-values.
 Water models are typically calibrated against a few different metrics: liquid density, heat of vapourisation,
 diffusivity, structure, density maximum, critical parameters, and dielectric constant \cite{guillot2002}.
-Whenever a new potential is published, these are the things they are talking about.
+These are the benchmarks for the success of a new model.
 
 \subsection{AMOEBA Force Field}
-The AMOEBA force field is a model which set out to model the electrodynamic interactions between molecules
-more accurately by including the effects of the charge distributions of atoms on their neighbours.
+The AMOEBA force field was designed to model the electrodynamic interactions between molecules
+more accurately by including the effects of atomic charge distributions on neighbouring atoms.
 This requires complex treatment of the electrostatics, which is necessarily computationally intensive.
 The complete form of the AMOEBA potential is
 
@@ -335,45 +339,47 @@ The complete form of the AMOEBA potential is
 
 where short-range valence interactions: stretching, angle bending,
 bond-angle cross term, out of plane bending, and torsional rotation are given by the first 5 terms
-and the last three terms are the non-bonded vdW and electrostatic contributions.
+and the last three terms are the non-bonded vdW (van der Waals) and electrostatic contributions,
+the description of which are given in Ren and Ponder's papers describing the original and updated versions of the
+forcefield \cite{ren2003,ponder2010}.
 
 \par
-The first four bonding terms are from an earlier forcefield (MM3).
+The first four bonding terms are from an earlier forcefield (MM3), designed for the treatment of hydrocarbons
+\cite{allinger1989}.
 They are anharmonic, using deviations from ideal bond lengths and angles up to as far as 6th order,
 meaning that they allow for compression and expansion.
-The torisional term is in the form of a Fourier expansion which smooths the potential in between the short-range and 
+The torsional term is in the form of a Fourier expansion which smooths the potential in between the short-range and 
 non-bonded interactions. 
 This term has greater impact in the study of certain organic compounds, like proteins, which have more complicated
 valence interactions, although it should still be effective in balancing AMOEBA water physically.
 
 \par
 The non-bonded interaction terms are more characteristic of AMOEBA and its classification as a `polarizable model'.
-The vdW interactino is in a `buffered 14-7' form with a `site' for each atom, which is the point from which pairwise
+The vdW interaction is in a `buffered 14-7' form with a `site' for each atom, which is the point from which pairwise
 interactions are calculated.
 This is slightly less repulsive than the well-known Lennard-Jones (12-6) potential.
 It was determined to have a better fit to state of the art calculations of noble gases.
 The vdW site for the hydrogen atom, however is not actually on the atom itself, it is instead placed at 
 a suitable distance along the O---H bond.
 The use of such a `reduction factor' is fairly common among water potentials and has significant evidence from
-calculation.
-However, one of the most common water potentials, TIP4P, has zero hydrogen vdW contribution.
+calculation and experiment \cite{stewart1965}. 
+%fix this!
+However, one of the most common water potentials, TIP4P, has zero hydrogen vdW contribution \cite{abascal2005}.
 The AMOEBA model accounts for the permanent multipole contributions of charge sites placed on the
 atoms up to the quadrupole moment
 
-\begin{equation}
-    M = [q, u_1, u_2, u_3, Q_{11}, Q_{12}, ..., Q_{33}]^T.
-    \label{eqn:polytensor}
+\begin{equation}\label{eqn:polytensor}
+    M_i = [q_i, u_{i,1}, u_{i,2}, u_{i,3}, Q_{i,11}, Q_{i,12}, ..., Q_{i,33}]^T.
 \end{equation}
 
-where $q$, $u_i$, and $Q_{ij}$ represent the point charge, dipole, and quadrupole moments, respectively.
-This gives the interaction term (in matrix form) 
+where $q$, $u_j$, and $Q_{jk}$ represent the point charge, dipole, and quadrupole moments, respectively.
+This gives the interaction term 
 
-\begin{equation}
-    U^\mathrm{perm}_\mathrm{ele}(r_{ij}) = M^TT\left(\frac{1}{r_{ij}}M\right) 
-    \label{eqn:perm-ele}
+\begin{equation}\label{eqn:perm-ele}
+    U^\mathrm{perm}_\mathrm{ele}(r_{ij}) = M_i^TT(r_{ij})M_j
 \end{equation}
 
-where $T$ is the some matrix differential operator and $r_{ij}$ is the separation of pairs of charge sites.
+where $T(r_{ij})$ is the some matrix differential operator and $r_{ij}$ is the separation of pairs of charge sites.
 The local frame in which these moments are evaluated should be chosen carefully, respecting molecular symmetry
 such that the multipoles remain constant with respect to their local frames as the molecules rotate and
 bend and stretch.
@@ -383,12 +389,12 @@ H---O---H bisector, which remains invariant through all the transformations list
 \par
 Before the publication of the AMOEBA force field, progress had been made towards a `polarizable' model for 
 MD.
-The earliest theoretical implementations of induced dipoles, however, the point dipole model,
+The earliest theoretical implementations of induced dipoles, the point dipole model,
 suffered from a `polarizability catastrophe':
 as the separation between point dipoles became increasingly small, atomic polarizablilities
 diverged.
 This is not observed physically.
-Hence, Thole (1981) proposed a modification to the point dipole model which damped short range dipole interactions
+Hence, Thole (1981) \cite{thole1981} proposed a modification to the point dipole model which damped short range dipole interactions
 by treating one of the dipoles in each pairwise interation as a smeared charge distribution.
 Implementing a Thole-style model is necessary for these MD potentials to allow intramolecular dipole induction
 without unphysical diverences.
@@ -413,10 +419,12 @@ Higher-order terms are `mutual induction', dipoles induced by neighbouring induc
 These mutual induction terms do converge to a sensible value, but it is the inclusion of this sort of
 computation that reduces the speed of AMOEBA with respect to other, non-polarizable potentials.
 However, for a periodic system, like ice crystals, electrostatic interactions in the AMOEBA model are treated
-by the Ewald summation method which greatly increases calculation efficiency.
+by the Ewald summation method which greatly increases calculation efficiency, the details of which are 
+outlined in \cite{smith1998}.
 
 \par
 The AMOEBA model was initially developed to simulate liquid water.
 Its parameters were fitted to data from the liquid and gas-phases, although previous experiments have shown AMOEBA 
-water to be reasonably accurate at reproducing the properties of low-pressure ice.
-The high-pressure conditions will test the limits of this potential.
+water to be reasonably accurate at reproducing the properties of low-pressure ice \cite{ren2004}.
+Earlier work has already been done on the mixing of liquid water and methane at high pressures \cite{kerr2024},
+but these densely packed ice structures will test the limits of this potential.

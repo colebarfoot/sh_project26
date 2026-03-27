@@ -1,14 +1,14 @@
 \section{Method}
 
 There are many different common molecular dynamics engines such as GROMACS but the vehicule of choice 
-for the ice simulations in this paper is LAMMPS (Large-scale Atomic/Molecular Massively Parallel Simulator).
+for the ice simulations in this report is LAMMPS (Large-scale Atomic/Molecular Massively Parallel Simulator).
 This choice was motivated by two factors: it is highly computationally efficient, with native support for 
 OpenMPI and OpenMP, and it recently implemented the AMOEBA force field, 
 originally only available on the TINKER software.
 LAMMPS has extensive documentation and a set of tutorials and exercises that allowed rapid familiarisation
 with the software.
-Once the AMOEBA simulations were complete, all of the data was analysed with original Python code, all of
-which is publically available \cite{github}.
+Once the AMOEBA simulations were complete, all of the data was analysed with the author's original Python code, all of
+which has been made publically available \cite{github}.
 
 \begin{figure}[hb!]
     \centering
@@ -19,7 +19,7 @@ which is publically available \cite{github}.
             \caption{Initial Ice--VIII configuration}
             \label{fig:ice8pre}
         \end{subfigure} &
-        \begin{subfigure}{0.36\linewidth}
+        \begin{subfigure}{0.355\linewidth}
             \centering
             \includegraphics[width=\linewidth]{ice7-pre}
             \caption{Initial Ice--VII configuration}
@@ -34,7 +34,7 @@ which is publically available \cite{github}.
 \par
 The AMOEBA water was parameterised using the data from Ren and Ponder's original model \cite{ren2003}.
 The ice structures were generated using GenIce2 and then loaded into LAMMPS: these crystals are shown
-in Figure \ref{fig:init}.
+in Figure \ref{fig:init} \cite{matsumoto2024,gravelle2025}.
 For Ice--VII there were 2000 molecules and for Ice--VIII there were 1728.
 This number is sufficient for simulating long-range coordination effects in the condensed phase, with
 at least 5 molecules extending in all spatial directions from the central atom at which point interactions
@@ -48,37 +48,37 @@ worth of atoms.
 In order to eliminate grain boundary and crystal defect effects, such as a lowered melting point, 
 periodic boundary conditions must be imposed.
 This ensures that the simulation treats the crystal system as fictitiously extending periodically
-beyond the simulation box boundaries.
-There must be some proof here of how useful.
+beyond the simulation box boundaries \cite{sharma2019}.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.6\linewidth]{equilib.pdf}
-    \caption{here is some equilibration}
+    \caption{System equilibration in the NPT ensemble at 240K and 3 GPa. The Nosé-Hoover thermostat
+    allows the temperature to come to a stable value over the 250 ps equilibration period.}
     \label{fig:equilib}
 \end{figure}
 
 \par
 Implementing MD in practice is a balancing act;
 maintaining the stability of a system with so many different moving parts can be difficult.
-Hence, system setup and conditions are important.
 For example, if one molecule were placed on top of another, the Pauli and electrostatic repulsions would send the two
 flying off into space immediately.
-Consider also the simulation box defined to be too small for number of atoms, the simulation pressure and energy
+Additionally, if the simulation box were defined to be too small for the number of atoms, the simulation pressure and energy
 would immediately become massive and unphysical behaviour might occur.
+Hence, precise setup of boundary and initial conditions is important.
 
 \par
 Care also needs to be taken with maintaining the conserved quantities of the simulation: \textit{e.g.}
 temperature, pressure and volume.
 Adjustments that are too rapid and/or aggresive may destabilize the system.
-Hence, two of the key tools for MD simulations are thermostats and barostats: functions which control
+Hence, two of the key tools for MD simulations are thermostats and barostats: functions which maintain
 the temperature and pressure, respectively, in a controlled way.
 These simulations are carried out in the NPT ensemble (number of particles, pressure, and temperature conserved)
 using Nosé-Hoover chain equations of motion outlined by Shinoda \textit{et al.} \cite{shinoda2004}.
-The thermostat rescales the particle velocities and the barostat rescales the simulation box dimensions in order to
-maintain the components of the system's internal stress tensor both on a timescale defined by some damping
-parameter.
-For both the isotropic and anisotropic variants, this stress tensor is diagonal, however the isotropic
+The thermostat rescales the particle velocities to maintain the temperature and the barostat rescales the 
+simulation box dimensions to maintain the components of the system's internal stress tensor. 
+Both act on a timescale defined by some damping parameter.
+For both the isotropic and anisotropic variants of the barostat, this stress tensor is diagonal, however the isotropic
 tensor has identical components down the diagonal.
 The anisotropic barostat is allowed to adjust the three dimensions of the simulation box disproportionately
 to one another.
@@ -134,10 +134,10 @@ As a result, an equilibration period of around 250 ps is chosen before any measu
     \begin{tikzpicture}[node distance=2cm]
         \node (start) [startstop, block] {Define AMOEBA force field and periodic boundary conditions};
         \node (in1) [io, below of=start, block] {Read datafile containing atomic positions, either Ice--VII or Ice--VIII};
-        \node (pro1) [process, below of=in1, block] {Equilibrate in Nosé-Hoover NVT ensemble for 10ps};
-        \node (pro2) [process, below of=pro1, block] {Increase pressure in isotropic Nosé-Hoover/Parinello-Rahman NPT ensemble
+        \node (pro1) [process, below of=in1, block] {Equilibrate in Nosé-Hoover chain NVT ensemble for 10ps};
+        \node (pro2) [process, below of=pro1, block] {Increase pressure in isotropic Nosé-Hoover chain NPT ensemble
         to target over 10 ns};
-        \node (pro3) [process, below of=pro2, block] {Main simulation run of anisotropic Nosé-Hoover/Parinello-Rahman NPT
+        \node (pro3) [process, below of=pro2, block] {Main simulation run of anisotropic Nosé-Hoover chain NPT
         ensemble for 4 ns (including 250 ps equilibration)};
         \node (out1) [io, below of=pro3, block] {Output thermodynamic data, dump file containing simulation trajectory, and
         binary restart file};
@@ -160,23 +160,23 @@ phase boundary:
 a `cooling run' for Ice--VII and a `heating run' for Ice--VIII, seeing if one (or both) would change
 into the other.
 The temperature ranged from 230-520K with increments of 10K. 
-Although (from \ref{fig:phase-diagram}) the actual phase boundary lies at around 270K at these conditions, 
-as is typical for molecular dynamics simulations, significant hysteresis is expected and the temperatures 
-were required to be significantly higher than the real-world value.
+Although the actual phase boundary lies at around 270K at these conditions (see Figure \ref{fig:phase-diagram}),
+as is typical for molecular dynamics simulations, significant hysteresis was expected, requiring temperatures 
+to be significantly higher than the real-world value.
 Furthermore, considering that the VII $\to$ VIII transition is a disorder $\to$ order transition, the
-hysteresis was expected to be more significant and the focus was placed on producing the easier VIII $\to$
+hysteresis was expected to be even more significant and the focus was placed on producing the easier VIII $\to$
 VII transition.
-Because MD is computationally intensive, and the equilibration period at each temperature requires
-about 6 hours of computer time with 8 parallel cores, doing a temperature ramp \textit{i.e.} heating up the
+Because MD is computationally intensive, and the equilibration period at each temperature was requiring
+about 6 hours of computer time with 8 parallel cores, a temperature ramp \textit{i.e.} heating up the
 same system slowly was impractical.
-The best thing to do was to run simultaneous simulations at different temperatures and inspect the final
+The best approach was to run simultaneous simulations at different temperatures and inspect the final
 states of each.
 However, a MD system which is started in the anistropic NPT system is generally not stable, since the molecules
 have not had time to settle into their positions and for the pressure to become stable.
-Hence, the simulation is first run in the NVT ensemble with the same Nosé-Hoover themostat for 10 ps until 
-the molecular positions have adjusted accordingly from the generated structure.
-Once this condition is satisfied, the pressure is gradually adjusted to the target 3 GPa.
-This is done isotropically so that there are no unstable box deformations with pressure fluctuation.
-Once the system reaches the target pressure, it may be allowed to undergo the equilibration period and
+Hence, the simulation was first run in the NVT ensemble with the same Nosé-Hoover themostat for 10 ps until 
+the molecular positions had adjusted accordingly from the generated structure.
+Once this condition was satisfied, the pressure was gradually adjusted to the target 3 GPa.
+This was done isotropically so that there were no unstable box deformations with pressure fluctuation.
+Once the system reached the target pressure, it was allowed to undergo the equilibration period and
 then run for a further 3.75 ns.
-The full procedure for these runs is outlined graphically in the flowchart in \ref{fig:flowchart}.
+The full procedure for these runs is outlined graphically in the flowchart in Figure \ref{fig:flowchart}.
