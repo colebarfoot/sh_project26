@@ -19,6 +19,7 @@ __pycache__/
 # ignore TeX output files
 *.aux
 *.pdf
+!report/sh_report26.pdf
 !report/figs/*.pdf
 
 # bib
